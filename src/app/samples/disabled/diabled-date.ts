@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {JalaliDateAdapter, PersianDateTimePickerModule} from 'persian-date-time-picker';
+import {JalaliDateAdapter, PersianDateTimePickerModule} from 'persian-date-time-picker-signal';
 import {FormsModule} from '@angular/forms';
 
 

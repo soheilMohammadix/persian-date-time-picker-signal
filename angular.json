@@ -96,20 +96,20 @@
         }
       }
     },
-    "persian-date-time-picker": {
+    "persian-date-time-picker-signal": {
       "projectType": "library",
-      "root": "projects/persian-date-time-picker",
-      "sourceRoot": "projects/persian-date-time-picker/src",
+      "root": "projects/persian-date-time-picker-signal",
+      "sourceRoot": "projects/persian-date-time-picker-signal/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/persian-date-time-picker/tsconfig.lib.prod.json"
+              "tsConfig": "projects/persian-date-time-picker-signal/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/persian-date-time-picker/tsconfig.lib.json"
+              "tsConfig": "projects/persian-date-time-picker-signal/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -117,10 +117,8 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "tsConfig": "projects/persian-date-time-picker/tsconfig.spec.json",
+            "tsConfig": "projects/persian-date-time-picker-signal/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }

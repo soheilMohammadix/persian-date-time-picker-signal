@@ -6,7 +6,7 @@ import {
   RangeInputLabels,
   TimeValueType,
   ValueFormat
-} from 'persian-date-time-picker';
+} from 'persian-date-time-picker-signal';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {FormControl, FormGroup, FormsModule} from '@angular/forms';
 import {JsonPipe, NgIf} from '@angular/common';
@@ -48,7 +48,7 @@ import {DisabledTimes} from './samples/disabled/diabled-time';
 })
 export class AppComponent {
 
-  title = 'persian-date-time-picker-demo';
+  title = 'persian-date-time-picker-signal-demo';
   Version = '0.1.1';
   isSidebarOpen = true;
   showPart = 'datepicker';
