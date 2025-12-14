@@ -260,12 +260,13 @@ button {
   .time-picker-popup {
     background: white;
     border-radius: 8px;
+    border: unset;
     //box-shadow: 0 6px 16px 0 $box-shadow-color;
-    width: 70vw;
+    width: 90vw;
     min-width: 200px;
     overflow: hidden;
     margin-block: 3px;
-    height: 47vh;
+    height: 57vh;
     //max-height: 280px;
   }
   .time-header {
