@@ -1,0 +1,148 @@
+<div [class.rtl]="rtl()" [class]="cssClass()" class="mobile-date-picker" tabindex="-1">
+  <!-- Selected Date/Time Display -->
+  <div class="selected-display">
+    <div class="selected-value">
+      <span class="selected-date">{{ getSelectedDateDisplay() }}</span>
+      <span class="selected-time">{{ getSelectedTimeDisplay() }}</span>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button 
+      (click)="activeTab.set('date')" 
+      [class.active]="activeTab() === 'date'"
+      class="tab-button">
+      Date
+    </button>
+    <button 
+      (click)="activeTab.set('time')" 
+      [class.active]="activeTab() === 'time'"
+      class="tab-button">
+      Time
+    </button>
+  </div>
+
+  <!-- Header Section (only for date tab) -->
+  @if (activeTab() === 'date') {
+    <div class="mobile-header">
+      <button (click)="closeDatePicker()" class="close-button" aria-label="Close date picker">
+        <span class="close-icon">×</span>
+      </button>
+      
+      <div class="header-title">
+        <button (click)="showMonthSelector()" class="title-button month-title" [class.active]="viewMode() === 'months'">
+          {{ getCurrentMonthName() }}
+        </button>
+        <button (click)="showYearSelector()" class="title-button year-title" [class.active]="viewMode() === 'years'">
+          {{ getCurrentYear() }}
+        </button>
+      </div>
+      
+      <div class="header-actions">
+        <button (click)="goPrev()" [disabled]="isPrevMonthDisabled()" class="nav-button prev" aria-label="Previous">
+          <span class="nav-icon">‹</span>
+        </button>
+        <button (click)="goNext()" [disabled]="isNextMonthDisabled()" class="nav-button next" aria-label="Next">
+          <span class="nav-icon">›</span>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Content Area -->
+  <div class="mobile-content-container">
+    <!-- Date Tab Content -->
+    @if (activeTab() === 'date') {
+      <div class="mobile-calendar-container">
+        @if (viewMode() === 'days') {
+          <div class="weekdays">
+            @for (day of getWeekDays(); track day) {
+              <div class="weekday">{{ day }}</div>
+            }
+          </div>
+          <div class="days-grid">
+            @for (day of days(); track day.getTime()) {
+              <button
+                (click)="selectDate(day)"
+                (mouseenter)="onMouseEnter(day, $event)"
+                [class.different-month]="!isSameMonth(day, currentDate()!)"
+                [class.disabled]="isDateDisabled(day)"
+                [class.in-range]="isInRange(day)"
+                [class.range-end]="isRangeEnd(day)"
+                [class.range-start]="isRangeStart(day)"
+                [class.selected]="isSelected(day)"
+                [class.today]="isToday(day)"
+                [disabled]="isDateDisabled(day)"
+                class="day-cell"
+                tabindex="-1">
+                {{ dateAdapter!.getDate(day) }}
+              </button>
+            }
+          </div>
+        }
+        
+        @if (viewMode() === 'months') {
+          <div class="months-grid">
+            @for (month of monthListNum; track month) {
+              <button
+                (click)="selectMonth(month, false)"
+                [class.selected]="isActiveMonth(month)"
+                [disabled]="isMonthDisabled(month)"
+                class="month-cell"
+                tabindex="-1">
+                {{ getMonthName(month) }}
+              </button>
+            }
+          </div>
+        }
+        
+        @if (viewMode() === 'years') {
+          <div class="years-grid">
+            @for (year of yearList(); track year) {
+              <button
+                (click)="selectYear(year)"
+                [class.selected]="isActiveYear(year)"
+                [disabled]="isYearDisabled(year)"
+                class="year-cell"
+                tabindex="-1">
+                {{ year }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Time Tab Content -->
+    @if (activeTab() === 'time') {
+      <div class="mobile-time-container">
+        <persian-time-picker
+          (timeChange)="onTimeChange($event)"
+          [cssClass]="'mobile-time-picker'"
+          [dateAdapter]="dateAdapter!"
+          [disabledTimesFilter]="disabledTimesFilter()"
+          [displayFormat]="timeDisplayFormat()"
+          [inline]="true"
+          [rtl]="rtl()"
+          [selectedDate]="selectedDate()"
+          [valueType]="'date'" />
+      </div>
+    }
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="mobile-action-buttons">
+    <button (click)="onTodayClick()" class="today-button" tabindex="-1">
+      {{ lang?.today }}
+    </button>
+    <div class="action-buttons-group">
+      <button (click)="closeDatePicker()" class="cancel-button" tabindex="-1">
+        {{ lang?.cancel }}
+      </button>
+      <button (click)="onOkClick()" class="ok-button" tabindex="-1">
+        {{ lang?.ok }}
+      </button>
+    </div>
+  </div>
+</div>

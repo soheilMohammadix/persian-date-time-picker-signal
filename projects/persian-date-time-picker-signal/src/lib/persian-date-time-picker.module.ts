@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {DatePickerComponent} from './date-picker/date-picker.component';
 import {TimePickerComponent} from './time-picker/time-picker.component';
 import {DatePickerPopupComponent} from './date-picker-popup/date-picker-popup.component';
+import {MobileDatePickerComponent} from './mobile-date-picker/mobile-date-picker.component';
 import {DateMaskDirective} from './utils/input-mask.directive';
 import {NzConnectedOverlayDirective} from './../public-api';
 import {CustomTemplate} from './utils/template.directive';
@@ -11,6 +12,7 @@ import {CustomTemplate} from './utils/template.directive';
     DatePickerComponent,
     TimePickerComponent,
     DatePickerPopupComponent,
+    MobileDatePickerComponent,
     DateMaskDirective,
     NzConnectedOverlayDirective,
     CustomTemplate
@@ -19,6 +21,7 @@ import {CustomTemplate} from './utils/template.directive';
     DatePickerComponent,
     TimePickerComponent,
     DatePickerPopupComponent,
+    MobileDatePickerComponent,
     DateMaskDirective,
     NzConnectedOverlayDirective,
     CustomTemplate

@@ -57,6 +57,7 @@ import {fromEvent, map, Subscription, takeUntil} from "rxjs";
 import {CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat,} from "../utils/types";
 import {CustomTemplate} from "../utils/template.directive";
 import {DateMaskDirective} from "../utils/input-mask.directive";
+import {MobileDatePickerComponent} from "../mobile-date-picker/mobile-date-picker.component";
 
 @Component({
   selector: "persian-date-picker",
@@ -75,7 +76,8 @@ import {DateMaskDirective} from "../utils/input-mask.directive";
     NgTemplateOutlet,
     NzConnectedOverlayDirective,
     DateMaskDirective,
-    DatePickerPopupComponent
+    DatePickerPopupComponent,
+    MobileDatePickerComponent
   ],
   providers: [
     DestroyService,

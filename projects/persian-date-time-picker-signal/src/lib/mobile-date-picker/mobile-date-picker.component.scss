@@ -1,0 +1,816 @@
+:host {
+  // Mobile dialog style variables - Light theme
+  --mobile-primary-color: #2563eb;
+  --mobile-primary-hover: #1d4ed8;
+  --mobile-primary-light: #eff6ff;
+  --mobile-secondary-color: #6b7280;
+  --mobile-background-color: #ffffff;
+  --mobile-border-color: #e5e7eb;
+  --mobile-text-color: #111827;
+  --mobile-text-color-light: #6b7280;
+  --mobile-shadow-color: rgba(0, 0, 0, 0.1);
+  --mobile-today-border: #2563eb;
+  --mobile-today-dot: #2563eb;
+  --mobile-disabled-color: #f3f4f6;
+  --mobile-success-color: #10b981;
+  --mobile-surface-color: #f9fafb;
+  --mobile-divider-color: #e5e7eb;
+
+  display: block;
+  position: relative;
+  z-index: 9999;
+
+  * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 400;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.mobile-date-picker {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  max-height: 85vh;
+  max-width: 90vw;
+  min-height: 400px;
+  background: var(--mobile-background-color);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px var(--mobile-shadow-color);
+  border: 1px solid var(--mobile-border-color);
+
+  &.rtl {
+    direction: rtl;
+  }
+}
+
+// Selected Date/Time Display
+.selected-display {
+  padding: 16px;
+  text-align: center;
+  background: var(--mobile-surface-color);
+  border-bottom: 1px solid var(--mobile-border-color);
+
+  .selected-value {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+    .selected-date {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--mobile-text-color);
+    }
+    
+    .selected-time {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--mobile-primary-color);
+    }
+  }
+}
+
+// Tab Navigation
+.tab-navigation {
+  display: flex;
+  background: var(--mobile-background-color);
+  border-bottom: 1px solid var(--mobile-border-color);
+
+  .tab-button {
+    flex: 1;
+    padding: 14px 16px;
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--mobile-text-color-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+
+    &.active {
+      color: var(--mobile-primary-color);
+      border-bottom-color: var(--mobile-primary-color);
+      font-weight: 600;
+    }
+
+    &:hover:not(.active) {
+      color: var(--mobile-text-color);
+      background-color: var(--mobile-surface-color);
+    }
+  }
+}
+
+// Content Container
+.mobile-content-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+// Mobile Header Section
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--mobile-surface-color);
+  border-bottom: 1px solid var(--mobile-border-color);
+  min-height: 56px;
+  position: relative;
+  z-index: 10;
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--mobile-text-color-light);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: var(--mobile-border-color);
+      color: var(--mobile-text-color);
+    }
+
+    &:active {
+      background-color: var(--mobile-divider-color);
+    }
+
+    .close-icon {
+      line-height: 1;
+      font-weight: 400;
+    }
+  }
+
+  .header-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    gap: 1px;
+
+    .title-button {
+      background: none;
+      border: none;
+      color: var(--mobile-text-color);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 3px 6px;
+      border-radius: 4px;
+
+      &:hover {
+        color: var(--mobile-primary-color);
+        background-color: var(--mobile-primary-light);
+      }
+
+      &.active {
+        color: var(--mobile-primary-color);
+        background-color: var(--mobile-primary-light);
+      }
+
+      &.month-title {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      &.year-title {
+        font-size: 13px;
+        font-weight: 500;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+
+    .nav-button {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--mobile-text-color-light);
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      &.prev {
+        transform: rotate(-180deg);
+      }
+
+      &:hover:not(:disabled) {
+        background-color: var(--mobile-border-color);
+        color: var(--mobile-text-color);
+      }
+
+      &:active:not(:disabled) {
+        background-color: var(--mobile-divider-color);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .nav-icon {
+        line-height: 1;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+// Mobile Calendar Container
+.mobile-calendar-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  background: var(--mobile-background-color);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    padding: 0 8px 12px;
+    font-size: 13px;
+    color: var(--mobile-text-color-light);
+    font-weight: 500;
+    background: var(--mobile-background-color);
+  }
+
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 0 8px;
+    background: var(--mobile-background-color);
+  }
+
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 8px;
+  }
+
+  .years-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 0 8px;
+  }
+}
+
+// Mobile Day Cells
+.day-cell {
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  background: var(--mobile-background-color);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--mobile-text-color);
+  transition: all 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-weight: 500;
+
+  &:hover:not(.disabled) {
+    background-color: var(--mobile-surface-color);
+    border-color: var(--mobile-border-color);
+    color: var(--mobile-text-color);
+  }
+
+  &:active:not(.disabled) {
+    background-color: var(--mobile-divider-color);
+    transform: scale(0.95);
+  }
+
+  &.different-month {
+    color: var(--mobile-text-color-light);
+    opacity: 0.5;
+  }
+
+  &.selected,
+  &.range-end.in-range,
+  &.range-start.in-range {
+    background-color: var(--mobile-primary-color);
+    border-color: var(--mobile-primary-color);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 122, 255, 0.3);
+  }
+
+  &.in-range {
+    background-color: var(--mobile-primary-light);
+    color: var(--mobile-primary-color);
+    border-color: var(--mobile-primary-color);
+    border-radius: 6px;
+  }
+
+  &.today {
+    color: var(--mobile-primary-color);
+    font-weight: 700;
+    border-color: var(--mobile-primary-color);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 3px;
+      background-color: var(--mobile-primary-color);
+      border-radius: 50%;
+    }
+
+    &.selected {
+      color: white;
+
+      &::after {
+        background-color: white;
+      }
+    }
+  }
+
+  &.disabled {
+    color: var(--mobile-text-color-light);
+    background: var(--mobile-surface-color);
+    border-color: var(--mobile-border-color);
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
+}
+
+// Mobile Month Cells
+.month-cell {
+  padding: 14px;
+  border: 1px solid var(--mobile-border-color);
+  background: var(--mobile-background-color);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--mobile-text-color);
+  transition: all 0.2s ease;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+
+  &:hover:not(.disabled) {
+    background-color: var(--mobile-surface-color);
+    border-color: var(--mobile-primary-color);
+    color: var(--mobile-text-color);
+  }
+
+  &:active:not(.disabled) {
+    background-color: var(--mobile-divider-color);
+    transform: scale(0.98);
+  }
+
+  &.selected {
+    background-color: var(--mobile-primary-color);
+    border-color: var(--mobile-primary-color);
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0, 122, 255, 0.25);
+  }
+
+  &.disabled {
+    color: var(--mobile-text-color-light);
+    background: var(--mobile-surface-color);
+    border-color: var(--mobile-border-color);
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
+}
+
+// Mobile Year Cells
+.year-cell {
+  padding: 14px;
+  border: 1px solid var(--mobile-border-color);
+  background: var(--mobile-background-color);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--mobile-text-color);
+  transition: all 0.2s ease;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+
+  &:hover:not(.disabled) {
+    background-color: var(--mobile-surface-color);
+    border-color: var(--mobile-primary-color);
+    color: var(--mobile-text-color);
+  }
+
+  &:active:not(.disabled) {
+    background-color: var(--mobile-divider-color);
+    transform: scale(0.98);
+  }
+
+  &.selected {
+    background-color: var(--mobile-primary-color);
+    border-color: var(--mobile-primary-color);
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0, 122, 255, 0.25);
+  }
+
+  &.disabled {
+    color: var(--mobile-text-color-light);
+    background: var(--mobile-surface-color);
+    border-color: var(--mobile-border-color);
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
+}
+
+// Mobile Time Container
+.mobile-time-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--mobile-background-color);
+
+  :host ::ng-deep .mobile-time-picker {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+// Mobile Action Buttons
+.mobile-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--mobile-surface-color);
+  border-top: 1px solid var(--mobile-border-color);
+
+  .today-button {
+    background: none;
+    border: 1px solid var(--mobile-border-color);
+    color: var(--mobile-text-color);
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: 100%;
+    text-align: center;
+
+    &:hover {
+      background-color: var(--mobile-surface-color);
+      border-color: var(--mobile-primary-color);
+      color: var(--mobile-primary-color);
+    }
+
+    &:active {
+      background-color: var(--mobile-divider-color);
+      transform: scale(0.98);
+    }
+  }
+
+  .action-buttons-group {
+    display: flex;
+    gap: 8px;
+
+    .ok-button,
+    .cancel-button {
+      flex: 1;
+      border-radius: 6px;
+      font-size: 14px;
+      padding: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid var(--mobile-border-color);
+      text-align: center;
+      min-height: 44px;
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+
+    .ok-button {
+      background: var(--mobile-primary-color);
+      border-color: var(--mobile-primary-color);
+      color: white;
+
+      &:hover {
+        background-color: var(--mobile-primary-hover);
+        border-color: var(--mobile-primary-hover);
+      }
+
+      &:active {
+        background-color: var(--mobile-primary-hover);
+      }
+    }
+
+    .cancel-button {
+      background: var(--mobile-background-color);
+      border-color: var(--mobile-border-color);
+      color: var(--mobile-text-color);
+
+      &:hover {
+        background-color: var(--mobile-surface-color);
+        border-color: var(--mobile-primary-color);
+        color: var(--mobile-text-color);
+      }
+
+      &:active {
+        background-color: var(--mobile-surface-color);
+      }
+    }
+  }
+}
+
+// Focus states for accessibility
+button:focus-visible {
+  outline: 2px solid var(--mobile-primary-color);
+  outline-offset: 2px;
+}
+
+// Additional mobile fixes
+.mobile-date-picker {
+  // Prevent double-tap zoom
+  touch-action: manipulation;
+
+  // Better scrolling on iOS
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-calendar-container {
+  // Smooth scrolling
+  scroll-behavior: smooth;
+
+  // Hide scrollbar but keep functionality
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  & {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+// RTL Support
+.rtl {
+  .nav-button.prev {
+    transform: rotate(0deg);
+  }
+
+  .nav-button.next {
+    transform: rotate(-180deg);
+  }
+}
+
+// Responsive adjustments for different screen sizes
+@media (max-width: 480px) {
+  .mobile-date-picker {
+    max-height: 90vh;
+    max-width: 95vw;
+    border-radius: 8px;
+  }
+
+  .mobile-header {
+    padding: 10px 12px;
+    min-height: 48px;
+
+    .close-button {
+      width: 36px;
+      height: 36px;
+      font-size: 20px;
+    }
+
+    .header-title {
+      .title-button {
+        &.month-title {
+          font-size: 15px;
+        }
+
+        &.year-title {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .header-actions {
+      .nav-button {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .mobile-calendar-container {
+    padding: 8px 12px;
+
+    .days-grid {
+      gap: 4px;
+    }
+
+    .months-grid,
+    .years-grid {
+      gap: 10px;
+    }
+  }
+
+  .day-cell {
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 13px;
+}
+
+  .mobile-action-buttons {
+    padding: 12px;
+    gap: 8px;
+
+    .today-button,
+    .ok-button,
+    .cancel-button {
+      padding: 10px;
+      font-size: 13px;
+      min-height: 40px;
+    }
+  }
+}
+
+
+
+  .mobile-header {
+    padding: 8px 10px;
+    min-height: 44px;
+  }
+
+  .mobile-calendar-container {
+    padding: 6px 10px;
+
+    .days-grid {
+      gap: 3px;
+    }
+
+    .months-grid,
+    .years-grid {
+      gap: 8px;
+    }
+  }
+
+  .day-cell {
+    min-width: 34px;
+    min-height: 34px;
+    font-size: 12px;
+  }
+
+  .month-cell,
+  .year-cell {
+    padding: 8px;
+    min-height: 40px;
+    font-size: 12px;
+  }
+
+  .mobile-action-buttons {
+    padding: 10px;
+    gap: 6px;
+
+    .today-button,
+    .ok-button,
+    .cancel-button {
+      padding: 8px;
+      font-size: 12px;
+      min-height: 36px;
+    }
+  }
+
+
+    .header-title {
+      .title-button {
+        &.month-title {
+          font-size: 16px;
+        }
+
+        &.year-title {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .header-actions {
+      .nav-button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+    }
+
+
+  .mobile-calendar-container {
+    padding: 12px;
+
+    .days-grid {
+      gap: 6px;
+    }
+
+    .months-grid,
+    .years-grid {
+      gap: 12px;
+    }
+  }
+
+  .day-cell {
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 14px;
+  }
+
+  .month-cell,
+  .year-cell {
+    padding: 12px;
+    min-height: 48px;
+    font-size: 14px;
+  }
+
+  .mobile-action-buttons {
+    padding: 12px;
+    gap: 12px;
+
+    .today-button,
+    .ok-button,
+    .cancel-button {
+      padding: 12px;
+      font-size: 14px;
+    }
+  }
+
+@media (max-width: 360px) {
+  .mobile-calendar-container {
+    .days-grid {
+      gap: 4px;
+    }
+
+    .months-grid,
+    .years-grid {
+      gap: 8px;
+    }
+  }
+
+  .day-cell {
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 12px;
+  }
+
+  .month-cell,
+  .year-cell {
+    padding: 8px;
+    min-height: 44px;
+    font-size: 12px;
+  }
+}
+
+

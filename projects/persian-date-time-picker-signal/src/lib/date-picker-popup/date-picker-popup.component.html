@@ -1,144 +1,86 @@
-<div [class.rtl]="rtl()" [class]="cssClass()" class="date-picker-popup" tabindex="-1">
+<div [class.rtl]="rtl()" [class]="cssClass()" class="date-picker-popup mobile-view" tabindex="-1">
   <div class="date-picker-content">
-    @if (showSidebar()) {
-      @if (isRange()) {
-        <div class="period-selector">
-          @for (period of periods; track period) {
+    <!-- Header Section -->
+    <div class="date-picker-header">
+      <button (click)="closeDatePicker()" class="close-button" aria-label="Close date picker">
+        <span class="close-icon">×</span>
+      </button>
+      <div class="header-title">
+        <span class="month-name" (click)="showMonthSelector()">{{ getCurrentMonthName() }}</span>
+        <span class="year" (click)="showYearSelector()">{{ getCurrentYear() }}</span>
+      </div>
+      <div class="header-actions">
+        <button (click)="goPrev()" [disabled]="isPrevMonthDisabled()" class="nav-button prev" aria-label="Previous month">
+          <span class="nav-icon">‹</span>
+        </button>
+        <button (click)="goNext()" [disabled]="isNextMonthDisabled()" class="nav-button next" aria-label="Next month">
+          <span class="nav-icon">›</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-container">
+      @if (viewMode() === 'days') {
+        <div class="weekdays">
+          @for (day of getWeekDays(); track day) {
+            <div class="weekday">{{ day }}</div>
+          }
+        </div>
+        <div class="days-grid">
+          @for (day of days(); track day.getTime()) {
             <button
-              (click)="selectPeriod(period)"
-              [class.active]="isActivePeriod(period)"
+              (click)="selectDate(day)"
+              [class.different-month]="!isSameMonth(day, currentDate()!)"
+              [class.disabled]="isDateDisabled(day)"
+              [class.in-range]="isInRange(day)"
+              [class.range-end]="isRangeEnd(day)"
+              [class.range-start]="isRangeStart(day)"
+              [class.selected]="isSelected(day)"
+              [class.today]="isToday(day)"
+              [disabled]="isDateDisabled(day)"
+              class="day-cell"
               tabindex="-1">
-              {{ period.label }}
-              @if (period.arrow) {
-                <span class="arrow">→</span>
-              }
+              {{ dateAdapter!.getDate(day) }}
             </button>
           }
         </div>
-      } @else {
-        <div #itemSelector class="side-selector">
-          @if (viewMode() == 'days') {
-            @for (month of monthListNum; track month) {
-              <button
-                (click)="selectMonth(month, false)"
-                [class.active]="isActiveMonth(month)"
-                [disabled]="isMonthDisabled(month)"
-                [id]="'selector_'+month"
-                tabindex="-1">
-                {{ getMonthName(month) }}
-              </button>
-            }
-          }
-          @if (viewMode() == 'months') {
-            @for (year of yearList(); track year) {
-              <button
-                (click)="selectYear(year, true)"
-                [class.active]="isActiveYear(year)"
-                [disabled]="isYearDisabled(year)"
-                [id]="'selector_'+year"
-                tabindex="-1">
-                {{ year }}
-              </button>
-            }
-          }
-          @if (viewMode() == 'years') {
-            @for (yearRange of yearRanges; track yearRange) {
-              <button
-                (click)="selectYearRange(yearRange.start)"
-                [class.active]="isActiveYearRange(yearRange.start)"
-                [disabled]="isYearRangeDisabled(yearRange)"
-                [id]="'selector_'+yearRange.start"
-                tabindex="-1">
-                {{ yearRange.start }} - {{ yearRange.end }}
-              </button>
-            }
-          }
-        </div>
       }
-    }
-    <div class="calendar">
-      <div class="header">
-        <button (click)="goPrev()" [disabled]="isPrevMonthDisabled()" class="persian-calendar-nav-left"
-        tabindex="-1"></button>
-        <span class="month-year">
-          @if (mode() != 'year') {
-            <span (click)="showMonthSelector()"
-              class="month-name">{{ getCurrentMonthName() }}
-            </span>
-          }
-          <span (click)="showYearSelector()" class="year">{{ getCurrentYear() }}</span>
-        </span>
-        <button (click)="goNext()" [disabled]="isNextMonthDisabled()" class="persian-calendar-nav-right"
-        tabindex="-1"></button>
-      </div>
-      <div>
-        @if (viewMode() === 'days') {
-          <div class="weekdays">
-            @for (day of getWeekDays(); track day) {
-              <span>{{ day }}</span>
-            }
-          </div>
-        }
-        @if (viewMode() === 'days') {
-          <div class="days">
-            @for (day of days(); track day.getTime()) {
-              <button
-                (click)="selectDate(day)"
-                (mouseenter)="onMouseEnter(day,$event)"
-                [class.different-month]="!isSameMonth(day, currentDate()!)"
-                [class.disabled]="isDateDisabled(day)"
-                [class.in-range]="isInRange(day)"
-                [class.range-end]="isRangeEnd(day)"
-                [class.range-start]="isRangeStart(day)"
-                [class.selected]="isSelected(day)"
-                [class.today]="isToday(day)"
-                [disabled]="isDateDisabled(day)"
-                tabindex="-1">
-                @if (dayTemplate) {
-                  <!-- dayTemplate is updated via effect to local property, so no () needed -->
-                  <ng-container *ngTemplateOutlet="$any(dayTemplate); context: { $implicit: day }"></ng-container>
-                } @else {
-                  {{ dateAdapter!.getDate(day) }}
-                }
-              </button>
-            }
-          </div>
-        }
-      </div>
       @if (viewMode() === 'months') {
-        <div class="months">
+        <div class="months-grid">
           @for (month of monthListNum; track month) {
             <button
               (click)="selectMonth(month,false)"
               [class.selected]="month === dateAdapter!.getMonth(currentDate()!)! + 1"
               [disabled]="isMonthDisabled(month)"
+              class="month-cell"
               tabindex="-1">
-              @if (monthTemplate) {
-                <ng-container *ngTemplateOutlet="$any(monthTemplate); context: { $implicit: month }"></ng-container>
-              } @else {
-                {{ getMonthName(month) }}
-              }
+              {{ getMonthName(month) }}
             </button>
           }
         </div>
       }
       @if (viewMode() === 'years' || mode() == 'year') {
-        <div class="years">
+        <div class="years-grid">
           @for (year of yearList(); track year) {
             <button
               (click)="selectYear(year)"
               [class.selected]="year === dateAdapter!.getYear(currentDate()!)"
               [disabled]="isYearDisabled(year)"
+              class="year-cell"
               tabindex="-1">
-              @if (yearTemplate) {
-                <ng-container *ngTemplateOutlet="$any(yearTemplate); context: { $implicit: year }"></ng-container>
-              } @else {
-                {{ year }}
-              }
+              {{ year }}
             </button>
           }
         </div>
       }
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button (click)="onTodayClick()" class="today-button" tabindex="-1">
+        {{ lang?.today }}
+      </button>
     </div>
 
     <!-- Time Picker Integration -->
@@ -157,21 +99,15 @@
           [valueType]="'date'" />
       </div>
     }
-  </div>
-  @if (footerDescription() || showTimePicker() || showToday()) {
-    <div class="date-picker-footer">
-      @if (footerDescription()) {
-        <div [innerHtml]="footerDescription()" class="footer-description">
-        </div>
-      }
-      <div class="footer-actions">
-        @if (showTimePicker()) {
-          <button (click)="onOkClick()" class="footer-button ok">{{ lang?.ok }}</button>
-        }
-        @if (showToday()) {
-          <button (click)="onTodayClick()" class="footer-button">{{ lang?.today }}</button>
-        }
-      </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button (click)="onOkClick()" class="ok-button" tabindex="-1">
+        {{ lang?.ok }}
+      </button>
+      <button (click)="closeDatePicker()" class="cancel-button" tabindex="-1">
+        {{ lang?.cancel }}
+      </button>
     </div>
-  }
+  </div>
 </div>

@@ -11,6 +11,7 @@ export * from './lib/persian-date-time-picker.service';
 // Components
 export * from './lib/date-picker/date-picker.component';
 export * from './lib/date-picker-popup/date-picker-popup.component';
+export * from './lib/mobile-date-picker/mobile-date-picker.component';
 export * from './lib/time-picker/time-picker.component';
 
 // Models and Utils
