@@ -35,6 +35,7 @@
   height: 80vh;
   max-height: 85vh;
   max-width: 90vw;
+  min-width: 70vw;
   min-height: 400px;
   background: var(--mobile-background-color);
   position: fixed;
@@ -63,13 +64,13 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    
+
     .selected-date {
       font-size: 20px;
       font-weight: 700;
       color: var(--mobile-text-color);
     }
-    
+
     .selected-time {
       font-size: 16px;
       font-weight: 500;
@@ -218,10 +219,6 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
-
-      &.prev {
-        transform: rotate(-180deg);
-      }
 
       &:hover:not(:disabled) {
         background-color: var(--mobile-border-color);
@@ -467,7 +464,7 @@
 // Mobile Time Container
 .mobile-time-container {
   flex: 1;
-  padding: 20px;
+  //padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -598,16 +595,6 @@ button:focus-visible {
   }
 }
 
-// RTL Support
-.rtl {
-  .nav-button.prev {
-    transform: rotate(0deg);
-  }
-
-  .nav-button.next {
-    transform: rotate(-180deg);
-  }
-}
 
 // Responsive adjustments for different screen sizes
 @media (max-width: 480px) {

@@ -34,14 +34,38 @@
     <div #popupWrapper (click)="$event.stopPropagation()" [@slideMotion]="'enter'" [class.disabled]="disabled()"
       [class.inline]="inline()" [class]="'time-picker-popup ' + cssClass()" style="position: relative">
       <div class="time-picker-content">
+        <div class="time-header">
+          @if (showSeconds()) {
+          <span>ثانیه</span>
+          }
+          <span>دقیقه</span>
+          <span>ساعت</span>
+        </div>
         <div class="time-columns">
-          <!-- Hours -->
+          <!-- Seconds (if format includes seconds) -->
+          @if (showSeconds()) {
+            <div class="time-column">
+              <div class="time-scroller">
+                @for (second of seconds; track second) {
+                  <button (click)="selectSecond(second)"
+                          [class.disabled]="isSecondDisabled(second)" [class.selected]="selectedTime().second === second"
+                          [id]="'selector_s'+second" type="button">
+                    {{ second.toString().padStart(2, '0') }}
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="time-separator">:</div>
+          }
+
+          <!-- Minutes -->
           <div class="time-column">
             <div class="time-scroller">
-              @for (hour of hours(); track hour) {
-                <button (click)="selectHour(hour)" [class.disabled]="isHourDisabled(hour)"
-                  [class.selected]="selectedTime().hour === hour" [id]="'selector_h'+hour" type="button">
-                  {{ hour.toString().padStart(2, '0') }}
+              @for (minute of minutes; track minute) {
+                <button (click)="selectMinute(minute)"
+                        [class.disabled]="isMinuteDisabled(minute)" [class.selected]="selectedTime().minute === minute"
+                        [id]="'selector_m'+minute" type="button">
+                  {{ minute.toString().padStart(2, '0') }}
                 </button>
               }
             </div>
@@ -49,34 +73,18 @@
 
           <div class="time-separator">:</div>
 
-          <!-- Minutes -->
+          <!-- Hours -->
           <div class="time-column">
             <div class="time-scroller">
-              @for (minute of minutes; track minute) {
-                <button (click)="selectMinute(minute)"
-                  [class.disabled]="isMinuteDisabled(minute)" [class.selected]="selectedTime().minute === minute"
-                  [id]="'selector_m'+minute" type="button">
-                  {{ minute.toString().padStart(2, '0') }}
+              @for (hour of hours(); track hour) {
+                <button (click)="selectHour(hour)" [class.disabled]="isHourDisabled(hour)"
+                        [class.selected]="selectedTime().hour === hour" [id]="'selector_h'+hour" type="button">
+                  {{ hour.toString().padStart(2, '0') }}
                 </button>
               }
             </div>
           </div>
 
-          <!-- Seconds (if format includes seconds) -->
-          @if (showSeconds()) {
-            <div class="time-separator">:</div>
-            <div class="time-column">
-              <div class="time-scroller">
-                @for (second of seconds; track second) {
-                  <button (click)="selectSecond(second)"
-                    [class.disabled]="isSecondDisabled(second)" [class.selected]="selectedTime().second === second"
-                    [id]="'selector_s'+second" type="button">
-                    {{ second.toString().padStart(2, '0') }}
-                  </button>
-                }
-              </div>
-            </div>
-          }
 
           <!-- AM/PM (only in 12-hour format) -->
           @if (timeFormat() === '12') {

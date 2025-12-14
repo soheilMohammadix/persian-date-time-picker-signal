@@ -43,7 +43,7 @@ $success-color: #4caf50;
     overflow: hidden;
     z-index: 1000;
     width: 100%;
-    max-width: 380px;
+    max-width: 600px;
     border: 1px solid $border-color;
     background: $background-color;
     min-height: 480px;
@@ -56,12 +56,56 @@ $success-color: #4caf50;
     overflow: hidden;
   }
 
+
   &-footer {
     border-top: 1px solid $border-color;
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+  }
+
+}
+// Main content layout (Desktop)
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.calendar-section {
+  //flex: 1;
+  display: flex;
+  flex-direction: column;
+  //min-width: 0;
+}
+
+.calendar-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+// Time Picker Section (Desktop)
+.time-picker-section {
+  width: 200px;
+  border-left: 1px solid $border-color;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+
+  .time-picker-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 16px;
+
+    .time-picker-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-color;
+      text-align: center;
+      display: block;
+    }
   }
 }
 
@@ -72,10 +116,22 @@ $success-color: #4caf50;
     max-height: 100vh;
   }
 
+  .main-content {
+    flex-direction: row;
+  }
+
   .calendar-container {
     flex: 1;
     overflow-y: auto;
+    padding: 2px;
+  }
+
+  .time-picker-section {
+    width: 100%;
+    border-left: none;
     padding: 16px;
+
+
   }
 }
 
@@ -146,9 +202,9 @@ $success-color: #4caf50;
       justify-content: center;
       transition: background-color 0.3s;
 
-      &.prev {
-        transform: rotate(-180deg);
-      }
+      //&.prev {
+      //  transform: rotate(-180deg);
+      //}
 
       &:hover {
         background-color: $primary-light;
@@ -177,8 +233,7 @@ $success-color: #4caf50;
   .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    padding: 0 8px;
+    gap: 1px;
   }
 
   .months-grid {
@@ -376,11 +431,7 @@ $success-color: #4caf50;
   }
 }
 
-// Time Picker Section
-.time-picker-section {
-  border-top: 1px solid $border-color;
-  padding: 16px;
-}
+
 
 // Footer Description
 .footer-description {
@@ -438,8 +489,24 @@ button:disabled {
     padding: 12px;
   }
 
+  .main-content {
+    flex-direction: column;
+  }
+
   .calendar-container {
     padding: 12px;
+  }
+
+  .time-picker-section {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid $border-color;
+    padding: 12px;
+
+    .time-picker-header {
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+    }
   }
 
   .day-cell {
@@ -464,5 +531,15 @@ button:disabled {
   .today-button {
     padding: 10px 20px;
     font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .date-picker-popup {
+    max-width: 500px;
+  }
+
+  .time-picker-section {
+    width: 180px;
   }
 }

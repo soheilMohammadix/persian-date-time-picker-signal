@@ -2,103 +2,116 @@
   <div class="date-picker-content">
     <!-- Header Section -->
     <div class="date-picker-header">
-      <button (click)="closeDatePicker()" class="close-button" aria-label="Close date picker">
-        <span class="close-icon">×</span>
+<!--      <button (click)="closeDatePicker()" class="close-button" aria-label="Close date picker">-->
+<!--        <span class="close-icon">×</span>-->
+<!--      </button>-->
+      <div class="header-actions">
+      <button (click)="goPrev()" [disabled]="isPrevMonthDisabled()" class="nav-button prev" aria-label="Previous month">
+        <span class="nav-icon">‹</span>
       </button>
+      </div>
+
       <div class="header-title">
         <span class="month-name" (click)="showMonthSelector()">{{ getCurrentMonthName() }}</span>
         <span class="year" (click)="showYearSelector()">{{ getCurrentYear() }}</span>
       </div>
       <div class="header-actions">
-        <button (click)="goPrev()" [disabled]="isPrevMonthDisabled()" class="nav-button prev" aria-label="Previous month">
-          <span class="nav-icon">‹</span>
-        </button>
+
         <button (click)="goNext()" [disabled]="isNextMonthDisabled()" class="nav-button next" aria-label="Next month">
           <span class="nav-icon">›</span>
         </button>
       </div>
     </div>
 
-    <!-- Calendar Grid -->
-    <div class="calendar-container">
-      @if (viewMode() === 'days') {
-        <div class="weekdays">
-          @for (day of getWeekDays(); track day) {
-            <div class="weekday">{{ day }}</div>
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Calendar Section -->
+      <div class="calendar-section">
+        <!-- Calendar Grid -->
+        <div class="calendar-container">
+          @if (viewMode() === 'days') {
+            <div class="weekdays">
+              @for (day of getWeekDays(); track day) {
+                <div class="weekday">{{ day }}</div>
+              }
+            </div>
+            <div class="days-grid">
+              @for (day of days(); track day.getTime()) {
+                <button
+                  (click)="selectDate(day)"
+                  [class.different-month]="!isSameMonth(day, currentDate()!)"
+                  [class.disabled]="isDateDisabled(day)"
+                  [class.in-range]="isInRange(day)"
+                  [class.range-end]="isRangeEnd(day)"
+                  [class.range-start]="isRangeStart(day)"
+                  [class.selected]="isSelected(day)"
+                  [class.today]="isToday(day)"
+                  [disabled]="isDateDisabled(day)"
+                  class="day-cell"
+                  tabindex="-1">
+                  {{ dateAdapter!.getDate(day) }}
+                </button>
+              }
+            </div>
+          }
+          @if (viewMode() === 'months') {
+            <div class="months-grid">
+              @for (month of monthListNum; track month) {
+                <button
+                  (click)="selectMonth(month,false)"
+                  [class.selected]="month === dateAdapter!.getMonth(currentDate()!)! + 1"
+                  [disabled]="isMonthDisabled(month)"
+                  class="month-cell"
+                  tabindex="-1">
+                  {{ getMonthName(month) }}
+                </button>
+              }
+            </div>
+          }
+          @if (viewMode() === 'years' || mode() == 'year') {
+            <div class="years-grid">
+              @for (year of yearList(); track year) {
+                <button
+                  (click)="selectYear(year)"
+                  [class.selected]="year === dateAdapter!.getYear(currentDate()!)"
+                  [disabled]="isYearDisabled(year)"
+                  class="year-cell"
+                  tabindex="-1">
+                  {{ year }}
+                </button>
+              }
+            </div>
           }
         </div>
-        <div class="days-grid">
-          @for (day of days(); track day.getTime()) {
-            <button
-              (click)="selectDate(day)"
-              [class.different-month]="!isSameMonth(day, currentDate()!)"
-              [class.disabled]="isDateDisabled(day)"
-              [class.in-range]="isInRange(day)"
-              [class.range-end]="isRangeEnd(day)"
-              [class.range-start]="isRangeStart(day)"
-              [class.selected]="isSelected(day)"
-              [class.today]="isToday(day)"
-              [disabled]="isDateDisabled(day)"
-              class="day-cell"
-              tabindex="-1">
-              {{ dateAdapter!.getDate(day) }}
-            </button>
-          }
-        </div>
-      }
-      @if (viewMode() === 'months') {
-        <div class="months-grid">
-          @for (month of monthListNum; track month) {
-            <button
-              (click)="selectMonth(month,false)"
-              [class.selected]="month === dateAdapter!.getMonth(currentDate()!)! + 1"
-              [disabled]="isMonthDisabled(month)"
-              class="month-cell"
-              tabindex="-1">
-              {{ getMonthName(month) }}
-            </button>
-          }
-        </div>
-      }
-      @if (viewMode() === 'years' || mode() == 'year') {
-        <div class="years-grid">
-          @for (year of yearList(); track year) {
-            <button
-              (click)="selectYear(year)"
-              [class.selected]="year === dateAdapter!.getYear(currentDate()!)"
-              [disabled]="isYearDisabled(year)"
-              class="year-cell"
-              tabindex="-1">
-              {{ year }}
-            </button>
-          }
-        </div>
-      }
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <button (click)="onTodayClick()" class="today-button" tabindex="-1">
-        {{ lang?.today }}
-      </button>
-    </div>
-
-    <!-- Time Picker Integration -->
-    @if (showTimePicker()) {
-      <div class="time-picker-section">
-        <persian-time-picker
-          #timePicker
-          (timeChange)="onTimeChange($event)"
-          [cssClass]="'embedded-time-picker'"
-          [dateAdapter]="dateAdapter!"
-          [disabledTimesFilter]="disabledTimesFilter()"
-          [displayFormat]="timeDisplayFormat()"
-          [inline]="true"
-          [rtl]="rtl()"
-          [selectedDate]="selectedDate()"
-          [valueType]="'date'" />
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button (click)="onTodayClick()" class="today-button" tabindex="-1">
+            {{ lang?.today }}
+          </button>
+        </div>
       </div>
-    }
+
+      <!-- Time Picker Section -->
+      @if (showTimePicker()) {
+        <div class="time-picker-section">
+<!--          <div class="time-picker-header">-->
+<!--            <span class="time-picker-title">Time</span>-->
+<!--          </div>-->
+          <persian-time-picker
+            #timePicker
+            (timeChange)="onTimeChange($event)"
+            [cssClass]="'embedded-time-picker'"
+            [dateAdapter]="dateAdapter!"
+            [disabledTimesFilter]="disabledTimesFilter()"
+            [displayFormat]="timeDisplayFormat()"
+            [inline]="true"
+            [rtl]="rtl()"
+            [selectedDate]="selectedDate()"
+            [valueType]="'date'" />
+        </div>
+      }
+    </div>
 
     <!-- Action Buttons -->
     <div class="action-buttons">

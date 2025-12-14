@@ -40,6 +40,11 @@ $focus-shadow-color: rgba(24, 144, 255, 0.2);
   display: inline-block;
 }
 
+.time-header {
+  display: flex;
+  justify-content: space-around;
+}
+
 .input-wrapper {
   position: relative;
   display: inline-flex;
@@ -92,7 +97,7 @@ input {
   overflow: hidden;
   margin-block: 3px;
   height: 40vh;
-  max-height: 280px;
+  //max-height: 280px;
 
   &.inline {
     box-shadow: none;
@@ -102,10 +107,6 @@ input {
     .time-picker-content {
       padding: 4px;
       height: 100%;
-    }
-
-    .time-columns {
-      padding: 4px;
     }
 
     .time-column {
@@ -141,9 +142,9 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
   gap: 8px;
   height: 100%;
+  padding-bottom: 2rem;
 }
 
 .time-column {
@@ -252,5 +253,23 @@ button {
     height: 286px;
     max-height: 290px;
     direction: ltr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .time-picker-popup {
+    background: white;
+    border-radius: 8px;
+    //box-shadow: 0 6px 16px 0 $box-shadow-color;
+    width: 70vw;
+    min-width: 200px;
+    overflow: hidden;
+    margin-block: 3px;
+    height: 47vh;
+    //max-height: 280px;
+  }
+  .time-header {
+    display: flex;
+    justify-content: space-around;
   }
 }
