@@ -1,8 +1,10 @@
 <div [class.date-picker-rtl]="rtl()" [class.disabled]="disabled()" [formGroup]="form!" class="date-picker-wrapper">
-  <ng-container *ngIf="!isInline(); else inlineMode">
-    <ng-container *ngIf="!isRange(); else rangeMode">
-      <div [class.rtl] class="input-container">
-        <label *ngIf="inputLabel()" for="dateInput">{{ inputLabel() }}</label>
+  @if (!isInline()) {
+    @if (!isRange()) {
+      <div class="input-container">
+        @if (inputLabel()) {
+          <label for="dateInput">{{ inputLabel() }}</label>
+        }
         <input #datePickerInput (blur)="onInputBlur(null,$event)" (click)="toggleDatePicker(null,$event)"
           (keydown)="onInputKeydown($event)"
           [attr.disabled]="disabled()? 'disabled':null" [class.focus]="isOpen()"
@@ -10,16 +12,17 @@
           [readonly]="readOnly() || readOnlyInput()" formControlName="dateInput" type="text">
         <ng-container *ngTemplateOutlet="icon"></ng-container>
       </div>
-    </ng-container>
-    <ng-template #rangeMode>
-      <div *ngIf="rangeInputLabels()" class="range-input-labels">
-        <div class="start-label">
-          <label for="startDateInput">{{ rangeInputLabels()!.start }}</label>
+    } @else {
+      @if (rangeInputLabels()) {
+        <div class="range-input-labels">
+          <div class="start-label">
+            <label for="startDateInput">{{ rangeInputLabels()!.start }}</label>
+          </div>
+          <div class="end-label">
+            <label for="endDateInput">{{ rangeInputLabels()!.end }}</label>
+          </div>
         </div>
-        <div class="end-label">
-          <label for="endDateInput">{{ rangeInputLabels()!.end }}</label>
-        </div>
-      </div>
+      }
       <div class="range-input-container">
         <input #rangePickerInput (blur)="onInputBlur('start',$event)" (click)="toggleDatePicker('start',$event)"
           (focusout)="onFocusout($event)" (keydown)="onInputKeydown($event)"
@@ -34,7 +37,7 @@
           [readonly]="readOnly() || readOnlyInput()" formControlName="endDateInput" type="text">
         <ng-container *ngTemplateOutlet="icon"></ng-container>
       </div>
-    </ng-template>
+    }
     <ng-template #icon>
       <button (click)="toggleDatePicker(null, $event)" class="calendar-button" tabindex="-1">
         <svg fill="#999" height="18px" viewBox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg">
@@ -44,8 +47,7 @@
         </svg>
       </button>
     </ng-template>
-  </ng-container>
-  <ng-template #inlineMode>
+  } @else {
     <div
       [class.persian-date-picker-dropdown-placement-bottomLeft]="currentPositionY === 'bottom' && currentPositionX === 'start'"
       [class.persian-date-picker-dropdown-placement-bottomRight]="currentPositionY === 'bottom' && currentPositionX === 'end'"
@@ -62,8 +64,32 @@
         [footerDescription]="footerDescription()" [isRange]="isRange()" [maxDate]="parsedMaxDate()"
         [minDate]="parsedMinDate()" [mode]="mode()" [rtl]="rtl()" [selectedDate]="selectedDate()"
         [selectedEndDate]="selectedEndDate()" [selectedStartDate]="selectedStartDate()" [showSidebar]="showSidebar()"
-        [showTimePicker]="showTimePicker" [showToday]="showToday()" [templates]="templates()"
-        [timeDisplayFormat]="timeDisplayFormat" tabindex="-1"></persian-date-picker-popup>
+        [showTimePicker]="showTimePicker()" [showToday]="showToday()" [templates]="templates()"
+      [timeDisplayFormat]="timeDisplayFormat()" tabindex="-1"></persian-date-picker-popup>
+    </div>
+  }
+
+
+
+    <ng-template #inlineMode>
+    <div
+      [class.persian-date-picker-dropdown-placement-bottomLeft]="currentPositionY === 'bottom' && currentPositionX === 'start'"
+      [class.persian-date-picker-dropdown-placement-bottomRight]="currentPositionY === 'bottom' && currentPositionX === 'end'"
+      [class.persian-date-picker-dropdown-placement-topLeft]="currentPositionY === 'top' && currentPositionX === 'start'"
+      [class.persian-date-picker-dropdown-placement-topRight]="currentPositionY === 'top' && currentPositionX === 'end'"
+      [class.persian-date-picker-dropdown-range]="isRange()" [class.persian-date-picker-dropdown-rtl]="rtl()"
+      class="dp-dropdown">
+      <persian-date-picker-popup (clickInside)="focus()" (closePicker)="close()"
+        (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
+        [@slideMotion]="'enter'" [activeInput]="activeInput()" [attr.disabled]="disabled()? 'disabled':null"
+        [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
+        [dateFormat]="extractDateFormat(format())" [disabledDatesFilter]="disabledDatesFilter()"
+        [disabledDates]="disabledDates()" [disabledTimesFilter]="disabledTimesFilter()"
+        [footerDescription]="footerDescription()" [isRange]="isRange()" [maxDate]="parsedMaxDate()"
+        [minDate]="parsedMinDate()" [mode]="mode()" [rtl]="rtl()" [selectedDate]="selectedDate()"
+        [selectedEndDate]="selectedEndDate()" [selectedStartDate]="selectedStartDate()" [showSidebar]="showSidebar()"
+        [showTimePicker]="showTimePicker()" [showToday]="showToday()" [templates]="templates()"
+      [timeDisplayFormat]="timeDisplayFormat()" tabindex="-1"></persian-date-picker-popup>
     </div>
   </ng-template>
   <ng-template (detach)="close()" (positionChange)="onPositionChange($event)"
@@ -72,13 +98,17 @@
     [cdkConnectedOverlayPositions]="overlayPositions"
     [cdkConnectedOverlayTransformOriginOn]="'.persian-date-time-picker-signal-wrapper'" cdkConnectedOverlay
     nzConnectedOverlay>
-    <div (click)="$event.stopPropagation()" *ngIf="!isMobile()" [@slideMotion]="'enter'" [class.disabled]="disabled()"
-      class="persian-date-time-picker-wrapper" style="position: relative;">
-      <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
-    </div>
-    <div (click)="$event.stopPropagation()" *ngIf="isMobile()" [@slideUpMotion]="'enter'" [class.disabled]="disabled()"
-      class="persian-date-time-picker-wrapper mobile-view" style="position: relative;">
-      <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
-    </div>
+    @if (!isMobile()) {
+      <div (click)="$event.stopPropagation()" [@slideMotion]="'enter'" [class.disabled]="disabled()"
+        class="persian-date-time-picker-wrapper" style="position: relative;">
+        <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
+      </div>
+    }
+    @if (isMobile()) {
+      <div (click)="$event.stopPropagation()" [@slideUpMotion]="'enter'" [class.disabled]="disabled()"
+        class="persian-date-time-picker-wrapper mobile-view" style="position: relative;">
+        <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
+      </div>
+    }
   </ng-template>
 </div>

@@ -3,28 +3,27 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
+  contentChildren,
+  effect,
   ElementRef,
   forwardRef,
   Inject,
+  inject,
   Injector,
+  input,
   NgZone,
   OnDestroy,
   OnInit,
-  QueryList,
+  output,
   runInInjectionContext,
   signal,
-  computed,
-  effect,
-  input,
-  output,
+  untracked,
   viewChild,
   viewChildren,
-  contentChildren,
-  inject,
-  untracked,
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { BreakpointObserver } from "@angular/cdk/layout";
+import {toSignal} from "@angular/core/rxjs-interop";
+import {BreakpointObserver} from "@angular/cdk/layout";
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -35,19 +34,10 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
 } from "@angular/forms";
-import { slideMotion, slideUpMotion } from "../utils/animation/slide";
-import {
-  DateAdapter,
-  GregorianDateAdapter,
-  JalaliDateAdapter,
-} from "../date-adapter";
-import {
-  CustomLabels,
-  DateRange,
-  LanguageLocale,
-  RangeInputLabels,
-} from "../utils/models";
-import { DatePickerPopupComponent } from "../date-picker-popup/date-picker-popup.component";
+import {slideMotion, slideUpMotion} from "../utils/animation/slide";
+import {DateAdapter, GregorianDateAdapter, JalaliDateAdapter,} from "../date-adapter";
+import {CustomLabels, DateRange, LanguageLocale, RangeInputLabels,} from "../utils/models";
+import {DatePickerPopupComponent} from "../date-picker-popup/date-picker-popup.component";
 import {
   CdkOverlayOrigin,
   ConnectedOverlayPositionChange,
@@ -61,21 +51,12 @@ import {
   DEFAULT_DATE_PICKER_POSITIONS,
   NzConnectedOverlayDirective,
 } from "../utils/overlay/overlay";
-import { DOCUMENT, NgIf, NgTemplateOutlet } from "@angular/common";
-import {
-  DestroyService,
-  PersianDateTimePickerService,
-} from "../persian-date-time-picker.service";
-import { fromEvent, takeUntil, map, Subscription } from "rxjs";
-import {
-  CalendarType,
-  DatePickerMode,
-  Placement,
-  RangePartType,
-  ValueFormat,
-} from "../utils/types";
-import { CustomTemplate } from "../utils/template.directive";
-import { DateMaskDirective } from "../utils/input-mask.directive";
+import {DOCUMENT, NgTemplateOutlet} from "@angular/common";
+import {DestroyService, PersianDateTimePickerService,} from "../persian-date-time-picker.service";
+import {fromEvent, map, Subscription, takeUntil} from "rxjs";
+import {CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat,} from "../utils/types";
+import {CustomTemplate} from "../utils/template.directive";
+import {DateMaskDirective} from "../utils/input-mask.directive";
 
 @Component({
   selector: "persian-date-picker",
@@ -88,14 +69,13 @@ import { DateMaskDirective } from "../utils/input-mask.directive";
     "[class.persian-date-picker-rtl]": "rtl()",
   },
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     OverlayModule,
     NgTemplateOutlet,
     NzConnectedOverlayDirective,
     DateMaskDirective,
-    DatePickerPopupComponent,
+    DatePickerPopupComponent
   ],
   providers: [
     DestroyService,
@@ -109,8 +89,7 @@ import { DateMaskDirective } from "../utils/input-mask.directive";
   animations: [slideMotion, slideUpMotion],
 })
 export class DatePickerComponent
-  implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy
-{
+  implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
   // ========== Input Signals ==========
   rtl = input(false);
   mode = input<DatePickerMode>("day");
@@ -167,14 +146,17 @@ export class DatePickerComponent
   selectedStartDate = signal<Date | null>(null);
   selectedEndDate = signal<Date | null>(null);
   activeInput = signal<"start" | "end" | "" | null>("");
-  dateAdapterSignal = signal<DateAdapter<Date> | null>(null);
+
+  dateAdapterSignal = computed<DateAdapter<Date>>(() => this.calendarType() === 'jalali' ? this.jalaliDateAdapter : this.gregorianDateAdapter);
 
   form?: FormGroup;
   hideStateHelper = false;
   isInternalChange = false;
   lastEmittedValue: any = null;
-  timeDisplayFormat = "HH:mm";
-  showTimePicker = false;
+
+  showTimePicker = computed(() => this.hasTimeComponent(this.format()))
+  timeDisplayFormat = computed(() => this.extractTimeFormat(this.format()))
+
   documentClickListener?: (event: MouseEvent) => void;
 
   private formSubscriptions: Subscription[] = [];
@@ -190,7 +172,7 @@ export class DatePickerComponent
     this.breakpointObserver
       .observe("(max-width: 599.98px)")
       .pipe(map((result) => result.matches)),
-    { initialValue: false },
+    {initialValue: false},
   );
 
   parsedMinDate = computed(() => {
@@ -273,13 +255,6 @@ export class DatePickerComponent
   }
 
   private initializeEffects(): void {
-    // Calendar Type Effect - Set date adapter when calendar type changes
-    effect(() => {
-      const type = this.calendarType();
-      const adapter =
-        type === "jalali" ? this.jalaliDateAdapter : this.gregorianDateAdapter;
-      this.dateAdapterSignal.set(adapter);
-    });
 
     // Language Effect
     effect(() => {
@@ -289,14 +264,6 @@ export class DatePickerComponent
       });
     });
 
-    // Format Change Effect
-    effect(() => {
-      const fmt = this.format();
-      untracked(() => {
-        this.showTimePicker = this.hasTimeComponent(fmt);
-        this.timeDisplayFormat = this.extractTimeFormat(fmt);
-      });
-    });
 
     // Placement Effect - initialize placement based on input
     effect(() => {
@@ -322,7 +289,6 @@ export class DatePickerComponent
 
     // Calendar Type change - update input values
     effect(() => {
-      const type = this.calendarType();
       const adapter = this.dateAdapterSignal();
       if (adapter) {
         untracked(() => {
@@ -494,16 +460,16 @@ export class DatePickerComponent
       this.isInternalChange = true;
       this.form!.get("startDateInput")?.setValue(
         this.dateAdapter!.format(date, this.format()),
-        { emitEvent: false },
+        {emitEvent: false},
       );
-      this.form!.get("endDateInput")?.setValue("", { emitEvent: false });
+      this.form!.get("endDateInput")?.setValue("", {emitEvent: false});
       this.isInternalChange = false;
     } else {
       this.selectedEndDate.set(date);
       this.isInternalChange = true;
       this.form!.get("endDateInput")?.setValue(
         this.dateAdapter!.format(date, this.format()),
-        { emitEvent: false },
+        {emitEvent: false},
       );
       this.isInternalChange = false;
       this.emitValueIfChanged();
@@ -516,11 +482,13 @@ export class DatePickerComponent
     this.selectedDate.set(date);
     const formattedDate = this.dateAdapter!.format(date, this.format());
     this.isInternalChange = true;
-    this.form!.get("dateInput")?.setValue(formattedDate, { emitEvent: false });
+    this.form!.get("dateInput")?.setValue(formattedDate, {emitEvent: false});
     this.isInternalChange = false;
     this.emitValueIfChanged();
-    this.close();
-    this.changeDetectorRef.markForCheck();
+    // Only close popup when time picker is not shown
+    if (!this.showTimePicker()) {
+      this.close();
+    }
   }
 
   onDateRangeSelected(dateRange: DateRange): void {
@@ -543,13 +511,12 @@ export class DatePickerComponent
       });
       this.isInternalChange = false;
       this.emitValueIfChanged();
-      if (!this.hasTimeComponent(this.format())) this.close();
+      if (!this.showTimePicker()) this.close();
       this.updateDatePickerPopup();
       this.focus();
     } else {
       this.isInternalChange = false;
     }
-    this.changeDetectorRef.markForCheck();
   }
 
   close(): void {
@@ -559,7 +526,6 @@ export class DatePickerComponent
     if (this.isOpen()) {
       this.isOpen.set(false);
       this.onOpenChange.emit(false);
-      this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -645,7 +611,7 @@ export class DatePickerComponent
       adjustedDate.setHours(date.getHours());
       adjustedDate.setMinutes(date.getMinutes());
       adjustedDate.setSeconds(date.getSeconds());
-      let { normalizedDate } = this.validateAndNormalizeTime(adjustedDate);
+      let {normalizedDate} = this.validateAndNormalizeTime(adjustedDate);
       adjustedDate = normalizedDate;
     }
     return adjustedDate;
@@ -783,7 +749,7 @@ export class DatePickerComponent
 
     const format = this.getFormatForMode();
     if (!this.dateAdapter.isValidFormat(value, format)) {
-      return { invalidFormat: true };
+      return {invalidFormat: true};
     }
     return null;
   }
@@ -972,7 +938,7 @@ export class DatePickerComponent
     this.open();
 
     // Force change detection to ensure overlay updates
-    this.changeDetectorRef.detectChanges();
+    // this.changeDetectorRef.detectChanges();
   }
 
   onInputKeydown(event: KeyboardEvent): void {
@@ -995,19 +961,19 @@ export class DatePickerComponent
       if (this.selectedStartDate()) {
         this.form!.get("startDateInput")?.setValue(
           this.dateAdapter.format(this.selectedStartDate()!, this.format()),
-          { emitEvent: false },
+          {emitEvent: false},
         );
       }
       if (this.selectedEndDate()) {
         this.form!.get("endDateInput")?.setValue(
           this.dateAdapter.format(this.selectedEndDate()!, this.format()),
-          { emitEvent: false },
+          {emitEvent: false},
         );
       }
     } else if (this.selectedDate()) {
       this.form!.get("dateInput")?.setValue(
         this.dateAdapter.format(this.selectedDate()!, this.format()),
-        { emitEvent: false },
+        {emitEvent: false},
       );
     }
     this.isInternalChange = false;
@@ -1033,8 +999,10 @@ export class DatePickerComponent
   }
 
   // ========== ControlValueAccessor Implementation ==========
-  onChange: any = () => {};
-  onTouch: any = () => {};
+  onChange: any = () => {
+  };
+  onTouch: any = () => {
+  };
 
   writeValue(value: any): void {
     if (!this.dateAdapter) {
@@ -1054,7 +1022,7 @@ export class DatePickerComponent
           this.selectedStartDate.set(startDate);
           this.form!.get("startDateInput")?.setValue(
             this.dateAdapter.format(startDate, this.format()),
-            { emitEvent: false },
+            {emitEvent: false},
           );
         }
 
@@ -1062,7 +1030,7 @@ export class DatePickerComponent
           this.selectedEndDate.set(endDate);
           this.form!.get("endDateInput")?.setValue(
             this.dateAdapter.format(endDate, this.format()),
-            { emitEvent: false },
+            {emitEvent: false},
           );
         }
       } else {
@@ -1071,7 +1039,7 @@ export class DatePickerComponent
           this.selectedDate.set(parsedDate);
           this.form!.get("dateInput")?.setValue(
             this.dateAdapter.format(parsedDate, this.format()),
-            { emitEvent: false },
+            {emitEvent: false},
           );
         }
       }
@@ -1089,9 +1057,9 @@ export class DatePickerComponent
     this.selectedDate.set(null);
     this.selectedStartDate.set(null);
     this.selectedEndDate.set(null);
-    this.form!.get("dateInput")?.setValue("", { emitEvent: false });
-    this.form!.get("startDateInput")?.setValue("", { emitEvent: false });
-    this.form!.get("endDateInput")?.setValue("", { emitEvent: false });
+    this.form!.get("dateInput")?.setValue("", {emitEvent: false});
+    this.form!.get("startDateInput")?.setValue("", {emitEvent: false});
+    this.form!.get("endDateInput")?.setValue("", {emitEvent: false});
     this.lastEmittedValue = null;
     this.isInternalChange = false;
     this.changeDetectorRef.markForCheck();

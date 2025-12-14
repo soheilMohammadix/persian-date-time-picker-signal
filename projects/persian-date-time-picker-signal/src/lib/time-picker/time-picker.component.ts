@@ -32,7 +32,7 @@ import { PersianDateTimePickerService } from '../persian-date-time-picker.servic
 import { DateAdapter, GregorianDateAdapter, JalaliDateAdapter } from '../date-adapter';
 import { TimeConfig, TimeFormat, TimeValueType } from '../utils/types';
 import { DEFAULT_DATE_PICKER_POSITIONS, NzConnectedOverlayDirective } from "../utils/overlay/overlay";
-import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { DateMaskDirective } from '../utils/input-mask.directive';
 
 @Component({
@@ -42,15 +42,13 @@ import { DateMaskDirective } from '../utils/input-mask.directive';
   styleUrls: ['./time-picker.component.scss'],
   standalone: true,
   imports: [
-    NgIf,
-    NgFor,
     FormsModule,
     ReactiveFormsModule,
     NgTemplateOutlet,
     DateMaskDirective,
     OverlayModule,
     NzConnectedOverlayDirective
-  ],
+],
   providers: [
     PersianDateTimePickerService,
     {
@@ -85,10 +83,12 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
   readOnly = input(false);
   readOnlyInput = input(false);
   displayFormat = input('hh:mm a');
+  showTimePicker = input(false);
 
-  // NOTE: 'value' and 'selectedDate' inputs from original code are better handled 
-  // via ControlValueAccessor or specific logic. 
-  // The 'value' setter was for setting initial value. 
+
+  // NOTE: 'value' and 'selectedDate' inputs from original code are better handled
+  // via ControlValueAccessor or specific logic.
+  // The 'value' setter was for setting initial value.
   // We can use a model or just input if we want one-way sync, but for now let's keep it as internal state
   // or additional input if needed.
   // Original had @Input() set selectedDate.
@@ -186,11 +186,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       // Just triggering computed dependency
       const l = this.effectiveLang();
       // If language changes, we might want to update period text in selectedTime if it matches AM/PM?
-      // Original code reset period on lang change: 
+      // Original code reset period on lang change:
       // this.selectedTime.period = this.lang.am;
       // this.periods = [this.lang.am, this.lang.pm];
       const currentPeriod = this.selectedTime().period;
-      // Logic to update period text if it was default? 
+      // Logic to update period text if it was default?
       // For simplicity, we stick closer to original behavior but maybe only if uninitialized or mismatch?
     });
 
@@ -225,6 +225,16 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
         setTimeout(() => this.scrollToTime(), 0);
       }
     });
+
+    // Manage document click listener based on inline mode
+    effect(() => {
+      const isInline = this.inline();
+      if (!isInline) {
+        document.addEventListener('click', this.handleDocumentClick);
+      } else {
+        document.removeEventListener('click', this.handleDocumentClick);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -237,15 +247,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     // this.value = this.selectedDate; -> handled by effect on selectedDateInput if provided?
     // But _selectedDate is initialized to new Date().
     this.writeValue(this._selectedDate);
-
-    // Only add document click listener for non-inline mode
-    if (!this.inline()) {
-      document.addEventListener('click', this.handleDocumentClick);
-    }
   }
 
   ngOnDestroy(): void {
     this.cleanupTimeouts();
+    // Clean up document click listener
     document.removeEventListener('click', this.handleDocumentClick);
   }
 
@@ -438,7 +444,7 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       this.selectedTime.update(t => ({ ...t, hour }));
       this.updateTimeDisplay();
       this.scrollToSelectedItem(`h${hour}`);
-      if (this.inline()) this.save();
+      if (this.inline()) this.save(false);
     }
   }
 
@@ -447,7 +453,7 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       this.selectedTime.update(t => ({ ...t, minute }));
       this.updateTimeDisplay();
       this.scrollToSelectedItem(`m${minute}`);
-      if (this.inline()) this.save();
+      if (this.inline()) this.save(false);
     }
   }
 
@@ -477,7 +483,7 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
 
     this.updateTimeDisplay();
     this.scrollToTime();
-    this.save();
+    this.save(false);
   }
 
   save(close = true): void {
@@ -657,9 +663,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
   }
 
   async scrollToTime() {
-    await this.scrollToSelectedItem(`h${this.selectedTime().hour}`, 'auto'),
-      await this.scrollToSelectedItem(`m${this.selectedTime().minute}`, 'auto'),
-      this.showSeconds() ? await this.scrollToSelectedItem(`s${this.selectedTime().second}`, 'auto') : '';
+    await this.scrollToSelectedItem(`h${this.selectedTime().hour}`, 'auto');
+    await this.scrollToSelectedItem(`m${this.selectedTime().minute}`, 'auto');
+    if (this.showSeconds()) {
+      await this.scrollToSelectedItem(`s${this.selectedTime().second}`, 'auto');
+    }
   }
 
   scrollToSelectedItem(id: string, behavior: ScrollBehavior = 'smooth'): Promise<boolean> {
