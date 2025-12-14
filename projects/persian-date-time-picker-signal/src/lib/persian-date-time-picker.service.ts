@@ -20,11 +20,6 @@ export class PersianDateTimePickerService {
   constructor(public persianLocale: PersianLocale, public englishLocale: EnglishLocale) {
   }
 
-  // Legacy methods for backward compatibility
-  getActiveInputValue() {
-    return this.activeInput.getValue();
-  }
-
   // Method to update both BehaviorSubject and signal
   setActiveInput(value: 'start' | 'end' | '') {
     this.activeInput.next(value);
@@ -35,6 +30,12 @@ export class PersianDateTimePickerService {
   setLanguageLocale(locale: LanguageLocale | undefined) {
     this.languageLocale = locale;
     this.languageLocaleSignal.set(locale);
+  }
+
+  // Method to get appropriate locale based on calendar type
+  getLocaleForCalendarType(calendarType: 'jalali' | 'gregorian'): LanguageLocale {
+    return this.languageLocaleSignal() || 
+           (calendarType === 'jalali' ? this.persianLocale : this.englishLocale);
   }
 
   // Legacy BehaviorSubject access for components still using RxJS

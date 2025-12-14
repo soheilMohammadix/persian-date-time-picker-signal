@@ -43,58 +43,68 @@ export interface LanguageLocale {
   ok: string;
   cancel: string;
   now: string;
+  hour: string
+  minute: string
+  second: string
+
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersianLocale implements LanguageLocale {
-  today: string = "امروز";
-  lastDay: string = "آخرین روز";
-  lastWeek: string = "آخرین هفته";
-  lastMonth: string = "آخرین ماه";
-  custom: string = "دلخواه";
-  previousMonth: string = "ماه قبل";
-  nextMonth: string = "ماه بعد";
-  previousYear: string = "سال قبل";
-  nextYear: string = "سال بعد";
-  selectTime: string = "انتخاب زمان";
-  selectDate: string = "انتخاب تاریخ";
-  selectMonth: string = "انتخاب ماه";
-  selectYear: string = "انتخاب سال";
-  selectDateRange: string = "انتخاب محدوده تاریخ";
-  startDate: string = "از تاریخ";
-  endDate: string = "تا تاریخ";
-  pm: string = "ب.ظ";
-  am: string = "ق.ظ";
-  ok: string = "تایید";
-  cancel: string = "لغو";
-  now: string = "اکنون";
+  today = "امروز";
+  lastDay = "آخرین روز";
+  lastWeek = "آخرین هفته";
+  lastMonth = "آخرین ماه";
+  custom = "دلخواه";
+  previousMonth = "ماه قبل";
+  nextMonth = "ماه بعد";
+  previousYear = "سال قبل";
+  nextYear = "سال بعد";
+  selectTime = "انتخاب زمان";
+  selectDate = "انتخاب تاریخ";
+  selectMonth = "انتخاب ماه";
+  selectYear = "انتخاب سال";
+  selectDateRange = "انتخاب محدوده تاریخ";
+  startDate = "از تاریخ";
+  endDate = "تا تاریخ";
+  pm = "ب.ظ";
+  am = "ق.ظ";
+  ok = "تایید";
+  cancel = "لغو";
+  now = "اکنون";
+  hour = 'ساعت'
+  minute = 'دقیقه'
+  second = 'ثانیه'
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnglishLocale implements LanguageLocale {
-  today: string = "Today";
-  lastDay: string = "Last Day";
-  lastWeek: string = "Last Week";
-  lastMonth: string = "Last Month";
-  custom: string = "Custom";
-  previousMonth: string = "Previous Month";
-  nextMonth: string = "Next Month";
-  previousYear: string = "Previous Year";
-  nextYear: string = "Next Year";
-  selectTime: string = "Select time";
-  selectDate: string = "Select date";
-  selectMonth: string = "Select month";
-  selectYear: string = "Select year";
-  selectDateRange: string = "Select date range";
-  startDate: string = "Start date";
-  endDate: string = "End date";
-  pm: string = "PM";
-  am: string = "AM";
-  ok: string = "Ok";
-  cancel: string = "Cancel";
-  now: string = "Now";
+  today = "Today";
+  lastDay = "Last Day";
+  lastWeek = "Last Week";
+  lastMonth = "Last Month";
+  custom = "Custom";
+  previousMonth = "Previous Month";
+  nextMonth = "Next Month";
+  previousYear = "Previous Year";
+  nextYear = "Next Year";
+  selectTime = "Select time";
+  selectDate = "Select date";
+  selectMonth = "Select month";
+  selectYear = "Select year";
+  selectDateRange = "Select date range";
+  startDate = "Start date";
+  endDate = "End date";
+  pm = "PM";
+  am = "AM";
+  ok = "Ok";
+  cancel = "Cancel";
+  now = "Now";
+  hour = 'Hour'
+  minute = 'Minute'
+  second = 'Second'
 }

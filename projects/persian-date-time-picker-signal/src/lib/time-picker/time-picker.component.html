@@ -36,10 +36,10 @@
       <div class="time-picker-content">
         <div class="time-header">
           @if (showSeconds()) {
-          <span>ثانیه</span>
+          <span>{{ lang?.second }}</span>
           }
-          <span>دقیقه</span>
-          <span>ساعت</span>
+          <span>{{ lang?.minute }}</span>
+          <span>{{ lang?.hour }}</span>
         </div>
         <div class="time-columns">
           <!-- Seconds (if format includes seconds) -->

@@ -15,7 +15,7 @@ import {
   effect,
   input,
   output,
-  viewChild
+  viewChild, inject
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -50,7 +50,6 @@ import { DateMaskDirective } from '../utils/input-mask.directive';
     NzConnectedOverlayDirective
 ],
   providers: [
-    PersianDateTimePickerService,
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => TimePickerComponent),
@@ -70,7 +69,6 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
   placement = input<'left' | 'right'>('right');
   minTime = input<string | undefined>(undefined);
   maxTime = input<string | undefined>(undefined);
-  lang = input<LanguageLocale | undefined>(undefined);
   valueType = input<TimeValueType>('string');
   cssClass = input('');
   showIcon = input(true);
@@ -84,6 +82,18 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
   readOnlyInput = input(false);
   displayFormat = input('hh:mm a');
   showTimePicker = input(false);
+
+  public persianDateTimePickerService = inject(PersianDateTimePickerService)
+  lang = this.persianDateTimePickerService.languageLocaleSignal()
+
+  // Language change effect
+  private languageChangeEffect = effect(() => {
+    const serviceLang = this.persianDateTimePickerService.languageLocaleSignal();
+    if (serviceLang !== this.lang) {
+      this.updateLanguage();
+    }
+  });
+
 
 
   // NOTE: 'value' and 'selectedDate' inputs from original code are better handled
@@ -128,7 +138,7 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
 
   // Computed
   effectiveLang = computed(() => {
-    const l = this.lang();
+    const l = this.lang;
     if (l) return l;
     return this.rtl() ? this.persianDateTimePickerService.persianLocale : this.persianDateTimePickerService.englishLocale;
   });
@@ -172,7 +182,7 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     return this.showSeconds() ? `${h}:${m}:${s}` : `${h}:${m}`;
   });
 
-  constructor(public formBuilder: FormBuilder, public elementRef: ElementRef, public injector: Injector, public changeDetectorRef: ChangeDetectorRef, public persianDateTimePickerService: PersianDateTimePickerService, public jalaliDateAdapter: JalaliDateAdapter, public gregorianDateAdapter: GregorianDateAdapter) {
+  constructor(public formBuilder: FormBuilder, public elementRef: ElementRef, public injector: Injector, public changeDetectorRef: ChangeDetectorRef, public jalaliDateAdapter: JalaliDateAdapter, public gregorianDateAdapter: GregorianDateAdapter) {
     this.initializeForm();
     this.initializeEffects();
 
@@ -775,5 +785,10 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       }
     }
     return true; // All seconds in minute are disabled
+  }
+
+  private updateLanguage(): void {
+    this.lang = this.persianDateTimePickerService.languageLocaleSignal() || 
+               this.persianDateTimePickerService.englishLocale;
   }
 }

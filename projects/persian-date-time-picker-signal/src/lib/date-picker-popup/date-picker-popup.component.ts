@@ -145,11 +145,19 @@ export class DatePickerPopupComponent
         type === "jalali" ? this.jalaliDateAdapter : this.gregorianDateAdapter;
       this.dateAdapterSignal.set(adapter);
 
-      this.lang = this.persianDateTimePickerService.languageLocaleSignal();
+      this.updateLanguage();
       if (adapter) {
         this.weekDays = adapter.getDayOfWeekNames("short");
       }
       this.changeDetectorRef.markForCheck();
+    });
+
+    // Language change effect
+    effect(() => {
+      const serviceLang = this.persianDateTimePickerService.languageLocaleSignal();
+      if (serviceLang !== this.lang) {
+        this.updateLanguage();
+      }
     });
 
     // Initial Date Effect - runs when selected dates change
@@ -260,14 +268,14 @@ export class DatePickerPopupComponent
         ? this.jalaliDateAdapter
         : this.gregorianDateAdapter;
     this.dateAdapterSignal.set(adapter);
-    this.lang =
-      this.persianDateTimePickerService.languageLocaleSignal() ||
-      (this.calendarType() === "jalali"
-        ? this.persianDateTimePickerService.persianLocale
-        : this.persianDateTimePickerService.englishLocale);
+    this.updateLanguage();
     if (adapter) {
       this.weekDays = adapter.getDayOfWeekNames("short");
     }
+  }
+
+  private updateLanguage(): void {
+    this.lang = this.persianDateTimePickerService.getLocaleForCalendarType(this.calendarType());
   }
 
   ngAfterViewInit() {
