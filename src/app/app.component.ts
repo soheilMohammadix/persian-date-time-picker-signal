@@ -50,7 +50,7 @@ export class AppComponent {
 
   title = 'persian-date-time-picker-signal-demo';
   Version = '0.1.1';
-  isSidebarOpen = true;
+  isSidebarOpen = false;
   showPart = 'datepicker';
 
   // models

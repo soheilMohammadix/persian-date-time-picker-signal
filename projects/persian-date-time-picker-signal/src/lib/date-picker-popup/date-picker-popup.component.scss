@@ -33,7 +33,7 @@ $text-color-disabled: #aaa;
   }
 }
 
-.date-picker {
+.date-picker  {
   &-popup {
     display: flex;
     flex-direction: column;
@@ -368,3 +368,13 @@ button:disabled {
 .time-picker-section {
   border-inline-start: 1px solid $border-color;
 }
+
+//@media screen and (max-width: 768px) {
+//  .date-picker {
+//    &-content {
+//      flex-direction: column !important;
+//      overflow: scroll !important;
+//      align-items: center !important;
+//    }
+//  }
+//}

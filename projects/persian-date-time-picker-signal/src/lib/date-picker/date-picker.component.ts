@@ -161,11 +161,6 @@ export class DatePickerComponent
 
   private formSubscriptions: Subscription[] = [];
 
-  // Computed
-  hasSelectedDate = computed(() => this.selectedDate() !== null);
-  hasSelectedRange = computed(
-    () => this.selectedStartDate() !== null && this.selectedEndDate() !== null,
-  );
 
   private breakpointObserver = inject(BreakpointObserver);
   isMobile = toSignal(

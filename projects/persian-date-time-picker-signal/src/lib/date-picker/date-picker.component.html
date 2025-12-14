@@ -98,17 +98,9 @@
     [cdkConnectedOverlayPositions]="overlayPositions"
     [cdkConnectedOverlayTransformOriginOn]="'.persian-date-time-picker-signal-wrapper'" cdkConnectedOverlay
     nzConnectedOverlay>
-    @if (!isMobile()) {
-      <div (click)="$event.stopPropagation()" [@slideMotion]="'enter'" [class.disabled]="disabled()"
-        class="persian-date-time-picker-wrapper" style="position: relative;">
-        <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
-      </div>
-    }
-    @if (isMobile()) {
       <div (click)="$event.stopPropagation()" [@slideUpMotion]="'enter'" [class.disabled]="disabled()"
         class="persian-date-time-picker-wrapper mobile-view" style="position: relative;">
         <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
       </div>
-    }
   </ng-template>
 </div>
