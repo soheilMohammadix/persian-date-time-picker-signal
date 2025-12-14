@@ -167,7 +167,7 @@ export class DatePickerComponent
   private breakpointObserver = inject(BreakpointObserver);
   isMobile = toSignal(
     this.breakpointObserver
-      .observe("(max-width: 599.98px)")
+      .observe("(max-width: 768.98px)")
       .pipe(map((result) => result.matches)),
     {initialValue: false},
   );
