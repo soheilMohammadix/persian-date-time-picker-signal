@@ -85,11 +85,13 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="quick-actions">
-          <button (click)="onTodayClick()" class="today-button" tabindex="-1">
-            {{ lang?.today }}
-          </button>
-        </div>
+        @if (showToday()) {
+          <div class="quick-actions">
+            <button (click)="onTodayClick()" class="today-button" tabindex="-1">
+              {{ lang?.today }}
+            </button>
+          </div>
+        }
       </div>
 
       <!-- Time Picker Section -->

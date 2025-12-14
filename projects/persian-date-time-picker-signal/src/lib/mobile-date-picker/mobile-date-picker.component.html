@@ -136,9 +136,11 @@
 
   <!-- Action Buttons -->
   <div class="mobile-action-buttons">
-    <button (click)="onTodayClick()" class="today-button" tabindex="-1">
-      {{ lang?.today }}
-    </button>
+    @if (showToday()) {
+      <button (click)="onTodayClick()" class="today-button" tabindex="-1">
+        {{ lang?.today }}
+      </button>
+    }
     <div class="action-buttons-group">
       <button (click)="closeDatePicker()" class="cancel-button" tabindex="-1">
         {{ lang?.cancel }}
