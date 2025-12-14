@@ -46,7 +46,7 @@ export interface LanguageLocale {
   hour: string
   minute: string
   second: string
-
+  usePersianNumbers: boolean;
 }
 
 @Injectable({
@@ -77,6 +77,7 @@ export class PersianLocale implements LanguageLocale {
   hour = 'ساعت'
   minute = 'دقیقه'
   second = 'ثانیه'
+  usePersianNumbers = true;
 }
 
 @Injectable({
@@ -107,4 +108,5 @@ export class EnglishLocale implements LanguageLocale {
   hour = 'Hour'
   minute = 'Minute'
   second = 'Second'
+  usePersianNumbers = false;
 }

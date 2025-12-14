@@ -50,7 +50,7 @@
                   <button (click)="selectSecond(second)"
                           [class.disabled]="isSecondDisabled(second)" [class.selected]="selectedTime().second === second"
                           [id]="'selector_s'+second" type="button">
-                    {{ second.toString().padStart(2, '0') }}
+                     {{ second.toString().padStart(2, '0') | convertNumbers }}
                   </button>
                 }
               </div>
@@ -65,7 +65,7 @@
                 <button (click)="selectMinute(minute)"
                         [class.disabled]="isMinuteDisabled(minute)" [class.selected]="selectedTime().minute === minute"
                         [id]="'selector_m'+minute" type="button">
-                  {{ minute.toString().padStart(2, '0') }}
+                  {{ minute.toString().padStart(2, '0') | convertNumbers }}
                 </button>
               }
             </div>
@@ -79,7 +79,7 @@
               @for (hour of hours(); track hour) {
                 <button (click)="selectHour(hour)" [class.disabled]="isHourDisabled(hour)"
                         [class.selected]="selectedTime().hour === hour" [id]="'selector_h'+hour" type="button">
-                  {{ hour.toString().padStart(2, '0') }}
+                  {{ hour.toString().padStart(2, '0') | convertNumbers }}
                 </button>
               }
             </div>

@@ -58,6 +58,7 @@ import {CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat,} fr
 import {CustomTemplate} from "../utils/template.directive";
 import {DateMaskDirective} from "../utils/input-mask.directive";
 import {MobileDatePickerComponent} from "../mobile-date-picker/mobile-date-picker.component";
+import {PersianNumbersPipe} from '../utils/persian-numbers.pipe';
 
 @Component({
   selector: "persian-date-picker",
@@ -77,7 +78,8 @@ import {MobileDatePickerComponent} from "../mobile-date-picker/mobile-date-picke
     NzConnectedOverlayDirective,
     DateMaskDirective,
     DatePickerPopupComponent,
-    MobileDatePickerComponent
+    MobileDatePickerComponent,
+    PersianNumbersPipe
   ],
   providers: [
     DestroyService,

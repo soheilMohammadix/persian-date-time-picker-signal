@@ -38,6 +38,23 @@ export class PersianDateTimePickerService {
            (calendarType === 'jalali' ? this.persianLocale : this.englishLocale);
   }
 
+  // Method to convert numbers based on locale setting
+  convertNumbers(number: number | string): string {
+    const locale = this.languageLocaleSignal();
+    if (!locale?.usePersianNumbers) {
+      return number.toString();
+    }
+    
+    // Convert to Persian/Arabic numbers
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    
+    return number.toString().replace(/[0-9]/g, (match) => {
+      const index = latinNumbers.indexOf(match);
+      return index !== -1 ? persianNumbers[index] : match;
+    });
+  }
+
   // Legacy BehaviorSubject access for components still using RxJS
   get activeInput$() {
     return this.activeInput.asObservable();

@@ -25,12 +25,13 @@ import {NgTemplateOutlet} from "@angular/common";
 import {CustomTemplate} from "../utils/template.directive";
 import {DateAdapter, GregorianDateAdapter, JalaliDateAdapter,} from "../date-adapter";
 import {DestroyService, PersianDateTimePickerService,} from "../persian-date-time-picker.service";
+import { ConvertNumbersPipe } from '../utils/convert-numbers.pipe';
 
 @Component({
   selector: "persian-date-picker-popup",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, TimePickerComponent],
+  imports: [NgTemplateOutlet, TimePickerComponent, ConvertNumbersPipe],
   templateUrl: "./date-picker-popup.component.html",
   styleUrls: ["./date-picker-popup.component.scss"],
 })

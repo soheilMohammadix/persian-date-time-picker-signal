@@ -29,6 +29,7 @@ import { CdkOverlayOrigin, ConnectedOverlayPositionChange, OverlayModule } from 
 import { slideMotion } from '../utils/animation/slide';
 import { LanguageLocale } from '../utils/models';
 import { PersianDateTimePickerService } from '../persian-date-time-picker.service';
+import { ConvertNumbersPipe } from '../utils/convert-numbers.pipe';
 import { DateAdapter, GregorianDateAdapter, JalaliDateAdapter } from '../date-adapter';
 import { TimeConfig, TimeFormat, TimeValueType } from '../utils/types';
 import { DEFAULT_DATE_PICKER_POSITIONS, NzConnectedOverlayDirective } from "../utils/overlay/overlay";
@@ -47,8 +48,9 @@ import { DateMaskDirective } from '../utils/input-mask.directive';
     NgTemplateOutlet,
     DateMaskDirective,
     OverlayModule,
-    NzConnectedOverlayDirective
-],
+    NzConnectedOverlayDirective,
+    ConvertNumbersPipe
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -173,6 +175,8 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       ? Array.from({ length: 12 }, (_, i) => i + 1)
       : Array.from({ length: 24 }, (_, i) => i);
   });
+
+
 
   displayTime = computed(() => {
     const time = this.selectedTime();

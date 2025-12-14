@@ -21,12 +21,13 @@ import {TimePickerComponent} from "../time-picker/time-picker.component";
 import {DateAdapter, GregorianDateAdapter, JalaliDateAdapter,} from "../date-adapter";
 import {DestroyService, PersianDateTimePickerService,} from "../persian-date-time-picker.service";
 import {CustomTemplate} from "../utils/template.directive";
+import { ConvertNumbersPipe } from '../utils/convert-numbers.pipe';
 
 @Component({
   selector: "mobile-date-picker",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TimePickerComponent],
+  imports: [TimePickerComponent, ConvertNumbersPipe],
   templateUrl: "./mobile-date-picker.component.html",
   styleUrls: ["./mobile-date-picker.component.scss"],
 })
