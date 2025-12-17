@@ -58,7 +58,6 @@ import {CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat,} fr
 import {CustomTemplate} from "../utils/template.directive";
 import {DateMaskDirective} from "../utils/input-mask.directive";
 import {MobileDatePickerComponent} from "../mobile-date-picker/mobile-date-picker.component";
-import {PersianNumbersPipe} from '../utils/persian-numbers.pipe';
 
 @Component({
   selector: "persian-date-picker",
@@ -79,7 +78,6 @@ import {PersianNumbersPipe} from '../utils/persian-numbers.pipe';
     DateMaskDirective,
     DatePickerPopupComponent,
     MobileDatePickerComponent,
-    PersianNumbersPipe
   ],
   providers: [
     DestroyService,
@@ -377,10 +375,22 @@ export class DatePickerComponent
 
   onInputChange(value: string, inputType?: "start" | "end"): void {
     if (!this.isInternalChange && this.dateAdapter) {
+      // Convert Persian numbers to Latin for processing
+      let processedValue = value;
+      if (value) {
+        const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        
+        processedValue = value.replace(/[۰-۹]/g, (match) => {
+          const index = persianNumbers.indexOf(match);
+          return index !== -1 ? latinNumbers[index] : match;
+        });
+      }
+
       if (this.isRange()) {
-        this.handleRangeInputChange(value, inputType);
+        this.handleRangeInputChange(processedValue, inputType);
       } else {
-        this.handleSingleInputChange(value);
+        this.handleSingleInputChange(processedValue);
       }
       this.updateDatePickerPopup();
     }
@@ -457,8 +467,9 @@ export class DatePickerComponent
       this.selectedStartDate.set(date);
       this.selectedEndDate.set(null);
       this.isInternalChange = true;
+      const formattedValue = this.dateAdapter!.format(date, this.format());
       this.form!.get("startDateInput")?.setValue(
-        this.dateAdapter!.format(date, this.format()),
+        this.convertNumbersForDisplay(formattedValue),
         {emitEvent: false},
       );
       this.form!.get("endDateInput")?.setValue("", {emitEvent: false});
@@ -466,8 +477,9 @@ export class DatePickerComponent
     } else {
       this.selectedEndDate.set(date);
       this.isInternalChange = true;
+      const formattedValue = this.dateAdapter!.format(date, this.format());
       this.form!.get("endDateInput")?.setValue(
-        this.dateAdapter!.format(date, this.format()),
+        this.convertNumbersForDisplay(formattedValue),
         {emitEvent: false},
       );
       this.isInternalChange = false;
@@ -481,7 +493,10 @@ export class DatePickerComponent
     this.selectedDate.set(date);
     const formattedDate = this.dateAdapter!.format(date, this.format());
     this.isInternalChange = true;
-    this.form!.get("dateInput")?.setValue(formattedDate, {emitEvent: false});
+    this.form!.get("dateInput")?.setValue(
+      this.convertNumbersForDisplay(formattedDate),
+      {emitEvent: false}
+    );
     this.isInternalChange = false;
     this.emitValueIfChanged();
     // Only close popup when time picker is not shown
@@ -497,17 +512,19 @@ export class DatePickerComponent
     this.selectedStartDate.set(start);
     const startFormatted = this.dateAdapter!.format(start!, this.format());
     this.isInternalChange = true;
-    this.form!.get("startDateInput")?.setValue(startFormatted, {
-      emitEvent: false,
-    });
+    this.form!.get("startDateInput")?.setValue(
+      this.convertNumbersForDisplay(startFormatted),
+      {emitEvent: false}
+    );
 
     if (dateRange.end) {
       const end = this.clampDate(<Date>dateRange.end);
       this.selectedEndDate.set(end);
       const endFormatted = this.dateAdapter!.format(end!, this.format());
-      this.form!.get("endDateInput")?.setValue(endFormatted, {
-        emitEvent: false,
-      });
+      this.form!.get("endDateInput")?.setValue(
+        this.convertNumbersForDisplay(endFormatted),
+        {emitEvent: false}
+      );
       this.isInternalChange = false;
       this.emitValueIfChanged();
       if (!this.showTimePicker()) this.close();
@@ -818,6 +835,9 @@ export class DatePickerComponent
 
     if (typeof inputValue === "string" && !this.isOpen()) {
       const correctedValue = this.validateAndCorrectInput(inputValue);
+      // Apply the corrected value directly to the input field
+      this.form!.get("dateInput")?.setValue(correctedValue, {emitEvent: false});
+      
       if (correctedValue !== inputValue) {
         if (inputValue) {
           this.handleCorrectedValue(inputType, correctedValue);
@@ -848,14 +868,27 @@ export class DatePickerComponent
   validateAndCorrectInput(value: string): string {
     if (!this.dateAdapter) return value;
 
-    let date = this.dateAdapter.parse(value, this.format());
+    // First convert Persian numbers to Latin for parsing
+    let processedValue = value;
+    if (value) {
+      const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+      const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      
+      processedValue = value.replace(/[۰-۹]/g, (match) => {
+        const index = persianNumbers.indexOf(match);
+        return index !== -1 ? latinNumbers[index] : match;
+      });
+    }
+
+    let date = this.dateAdapter.parse(processedValue, this.format());
     if (!date) {
       const today = this.dateAdapter.today();
       date = this.clampDate(today);
     } else {
       date = this.clampDate(date);
     }
-    return this.dateAdapter.format(date!, this.format());
+    const formattedValue = this.dateAdapter.format(date!, this.format());
+    return this.convertNumbersForDisplay(formattedValue);
   }
 
   handleCorrectedValue(
@@ -877,15 +910,27 @@ export class DatePickerComponent
   ): void {
     if (!this.dateAdapter) return;
 
+    // Convert Persian numbers to Latin for parsing
+    let processedValue = correctedValue;
+    if (correctedValue) {
+      const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+      const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      
+      processedValue = correctedValue.replace(/[۰-۹]/g, (match) => {
+        const index = persianNumbers.indexOf(match);
+        return index !== -1 ? latinNumbers[index] : match;
+      });
+    }
+
     if (inputType === "start") {
       this.form!.get("startDateInput")?.setValue(correctedValue);
       this.selectedStartDate.set(
-        this.dateAdapter.parse(correctedValue, this.format()),
+        this.dateAdapter.parse(processedValue, this.format()),
       );
     } else {
       this.form!.get("endDateInput")?.setValue(correctedValue);
       this.selectedEndDate.set(
-        this.dateAdapter.parse(correctedValue, this.format()),
+        this.dateAdapter.parse(processedValue, this.format()),
       );
     }
 
@@ -904,9 +949,21 @@ export class DatePickerComponent
   handleSingleCorrectedValue(correctedValue: string): void {
     if (!this.dateAdapter) return;
 
+    // Convert Persian numbers to Latin for parsing
+    let processedValue = correctedValue;
+    if (correctedValue) {
+      const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+      const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      
+      processedValue = correctedValue.replace(/[۰-۹]/g, (match) => {
+        const index = persianNumbers.indexOf(match);
+        return index !== -1 ? latinNumbers[index] : match;
+      });
+    }
+
     this.form!.get("dateInput")?.setValue(correctedValue);
     this.selectedDate.set(
-      this.dateAdapter.parse(correctedValue, this.format()),
+      this.dateAdapter.parse(processedValue, this.format()),
     );
     this.onChange(this.selectedDate());
     this.changeDetectorRef.markForCheck();
@@ -958,20 +1015,23 @@ export class DatePickerComponent
     this.isInternalChange = true;
     if (this.isRange()) {
       if (this.selectedStartDate()) {
+        const formattedValue = this.dateAdapter.format(this.selectedStartDate()!, this.format());
         this.form!.get("startDateInput")?.setValue(
-          this.dateAdapter.format(this.selectedStartDate()!, this.format()),
+          this.convertNumbersForDisplay(formattedValue),
           {emitEvent: false},
         );
       }
       if (this.selectedEndDate()) {
+        const formattedValue = this.dateAdapter.format(this.selectedEndDate()!, this.format());
         this.form!.get("endDateInput")?.setValue(
-          this.dateAdapter.format(this.selectedEndDate()!, this.format()),
+          this.convertNumbersForDisplay(formattedValue),
           {emitEvent: false},
         );
       }
     } else if (this.selectedDate()) {
+      const formattedValue = this.dateAdapter.format(this.selectedDate()!, this.format());
       this.form!.get("dateInput")?.setValue(
-        this.dateAdapter.format(this.selectedDate()!, this.format()),
+        this.convertNumbersForDisplay(formattedValue),
         {emitEvent: false},
       );
     }
@@ -1019,16 +1079,18 @@ export class DatePickerComponent
 
         if (startDate) {
           this.selectedStartDate.set(startDate);
+          const formattedValue = this.dateAdapter.format(startDate, this.format());
           this.form!.get("startDateInput")?.setValue(
-            this.dateAdapter.format(startDate, this.format()),
+            this.convertNumbersForDisplay(formattedValue),
             {emitEvent: false},
           );
         }
 
         if (endDate) {
           this.selectedEndDate.set(endDate);
+          const formattedValue = this.dateAdapter.format(endDate, this.format());
           this.form!.get("endDateInput")?.setValue(
-            this.dateAdapter.format(endDate, this.format()),
+            this.convertNumbersForDisplay(formattedValue),
             {emitEvent: false},
           );
         }
@@ -1036,8 +1098,9 @@ export class DatePickerComponent
         const parsedDate = this.parseIncomingValue(value);
         if (parsedDate) {
           this.selectedDate.set(parsedDate);
+          const formattedValue = this.dateAdapter.format(parsedDate, this.format());
           this.form!.get("dateInput")?.setValue(
-            this.dateAdapter.format(parsedDate, this.format()),
+            this.convertNumbersForDisplay(formattedValue),
             {emitEvent: false},
           );
         }
@@ -1165,4 +1228,25 @@ export class DatePickerComponent
     const dateFormatMatch = format.match(/[yMd\/.-]+/);
     return dateFormatMatch ? dateFormatMatch[0] : "";
   }
+
+  private convertNumbersForDisplay(value: string): string {
+    if (!value) return '';
+    
+    // Check if we should use Persian numbers
+    const locale = this.effectiveLang();
+    if (!locale?.usePersianNumbers) {
+      return value; // Return original for English
+    }
+    
+    // Convert Latin numbers to Persian/Arabic numbers
+    const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    
+    return value.replace(/[0-9]/g, (match) => {
+      const index = latinNumbers.indexOf(match);
+      return index !== -1 ? persianNumbers[index] : match;
+    });
+  }
+
+
 }

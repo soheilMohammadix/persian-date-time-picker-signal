@@ -9,7 +9,7 @@
           (keydown)="onInputKeydown($event)"
           [attr.disabled]="disabled()? 'disabled':null" [class.focus]="isOpen()"
           [disableInputMask]="disableInputMask()" [dtp-dateMask]="format()" [placeholder]="getPlaceholder()"
-           [readonly]="readOnly() || readOnlyInput()" formControlName="dateInput" type="text" [value]="form?.get('dateInput')?.value | persianNumbers">
+           [readonly]="readOnly() || readOnlyInput()" formControlName="dateInput" type="text">
         <ng-container *ngTemplateOutlet="icon"></ng-container>
       </div>
     } @else {
@@ -28,13 +28,13 @@
           (focusout)="onFocusout($event)" (keydown)="onInputKeydown($event)"
           [attr.disabled]="disabled()? 'disabled':null" [class.focus]="isOpen() && activeInput() === 'start'"
           [disableInputMask]="disableInputMask()" [dtp-dateMask]="format()" [placeholder]="getPlaceholder('start')"
-           [readonly]="readOnly() || readOnlyInput()" formControlName="startDateInput" type="text" [value]="form?.get('startDateInput')?.value | persianNumbers">
+           [readonly]="readOnly() || readOnlyInput()" formControlName="startDateInput" type="text">
         <span class="range-separator">→</span>
         <input #rangePickerInput (blur)="onInputBlur('end',$event)" (click)="toggleDatePicker('end',$event)"
           (focusout)="onFocusout($event)" (keydown)="onInputKeydown($event)"
           [attr.disabled]="disabled()? 'disabled':null" [class.focus]="isOpen() && activeInput() === 'end'"
           [disableInputMask]="disableInputMask()" [dtp-dateMask]="format()" [placeholder]="getPlaceholder('end')"
-           [readonly]="readOnly() || readOnlyInput()" formControlName="endDateInput" type="text" [value]="form?.get('endDateInput')?.value | persianNumbers">
+           [readonly]="readOnly() || readOnlyInput()" formControlName="endDateInput" type="text">
         <ng-container *ngTemplateOutlet="icon"></ng-container>
       </div>
     }
@@ -95,7 +95,7 @@
     @if (isMobile() && isOpen()) {
       <!-- Mobile Backdrop -->
       <div class="mobile-backdrop" (click)="close()"></div>
-      
+
       <mobile-date-picker (closePicker)="close()" (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
         [activeInput]="activeInput()" [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
         [dateFormat]="extractDateFormat(format())" [disabledDatesFilter]="disabledDatesFilter()" [disabledDates]="disabledDates()"
