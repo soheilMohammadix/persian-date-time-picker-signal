@@ -588,6 +588,8 @@ export class DatePickerPopupComponent
       const yearList = this.yearList();
       const yearStart = yearList[0] - 15;
       id = yearStart;
+      // Update currentDate to trigger yearList recalculation
+      this.currentDate.set(this.dateAdapter!.createDate(yearList[0] - 1, 0, 1));
     }
 
     this.changeDetectorRef.detectChanges();
@@ -611,6 +613,8 @@ export class DatePickerPopupComponent
       const yearList = this.yearList();
       const yearStart = yearList[14] + 1;
       id = yearStart;
+      // Update currentDate to trigger yearList recalculation
+      this.currentDate.set(this.dateAdapter!.createDate(yearList[14] + 1, 0, 1));
     }
 
     this.scrollToSelectedItem(id!);
