@@ -1,12 +1,15 @@
 {
   "name": "persian-date-time-picker-demo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:lib": "ng build persian-date-time-picker-signal",
+    "publish:lib": "npm publish ./dist/persian-date-time-picker-signal",
+    "publish": "npm run build:lib && npm publish ./dist/persian-date-time-picker-signal"
   },
   "private": true,
   "dependencies": {
