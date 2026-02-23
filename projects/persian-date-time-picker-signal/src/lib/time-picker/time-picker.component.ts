@@ -15,7 +15,9 @@ import {
   effect,
   input,
   output,
-  viewChild, inject
+  untracked,
+  viewChild, inject,
+  booleanAttribute
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -67,23 +69,23 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
 
   // ========== Input Signals ==========
   placeholder = input<string | undefined>(undefined);
-  rtl = input(false);
+  rtl = input(false, { transform: booleanAttribute });
   placement = input<'left' | 'right'>('right');
   minTime = input<string | undefined>(undefined);
   maxTime = input<string | undefined>(undefined);
   valueType = input<TimeValueType>('string');
   cssClass = input('');
-  showIcon = input(true);
+  showIcon = input(true, { transform: booleanAttribute });
   dateAdapter = input<DateAdapter<Date> | undefined>(undefined);
-  inline = input(false);
-  disableInputMask = input(false);
-  disabled = input(false);
+  inline = input(false, { transform: booleanAttribute });
+  disableInputMask = input(false, { transform: booleanAttribute });
+  disabled = input(false, { transform: booleanAttribute });
   disabledTimesFilter = input<(date: Date) => boolean>();
-  allowEmpty = input(true);
-  readOnly = input(false);
-  readOnlyInput = input(false);
+  allowEmpty = input(true, { transform: booleanAttribute });
+  readOnly = input(false, { transform: booleanAttribute });
+  readOnlyInput = input(false, { transform: booleanAttribute });
   displayFormat = input('hh:mm a');
-  showTimePicker = input(false);
+  showTimePicker = input(false, { transform: booleanAttribute });
 
   public persianDateTimePickerService = inject(PersianDateTimePickerService)
   lang = this.persianDateTimePickerService.languageLocaleSignal()
@@ -212,7 +214,10 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     effect(() => {
       const val = this.valueInput();
       if (val !== null && val !== undefined) {
-        this.writeValue(val);
+        untracked(() => {
+          this._value = val;
+          this.updateFromValue(val);
+        });
       }
     });
 
@@ -260,7 +265,9 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     // Initialize with selectedDate
     // this.value = this.selectedDate; -> handled by effect on selectedDateInput if provided?
     // But _selectedDate is initialized to new Date().
-    this.writeValue(this._selectedDate);
+    if (!this.allowEmpty() || this.valueInput() || this.selectedDateInput()) {
+      this.writeValue(this._selectedDate);
+    }
   }
 
   ngOnDestroy(): void {
@@ -368,6 +375,9 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
   writeValue(value: Date | string | null): void {
     if (!value) {
       this._value = null;
+      if (!this.allowEmpty()) {
+        this.save(false);
+      }
       return;
     }
 
@@ -380,7 +390,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     }
 
     this.updateTimeDisplay();
-    this.save(false);
+    // Only save and emit if we actually had a value provided,
+    // or if we do not allow empty (defaulting to current time).
+    if (value || !this.allowEmpty()) {
+      this.save(false);
+    }
   }
 
   registerOnChange(fn: any): void {
@@ -792,7 +806,7 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
   }
 
   private updateLanguage(): void {
-    this.lang = this.persianDateTimePickerService.languageLocaleSignal() || 
-               this.persianDateTimePickerService.englishLocale;
+    this.lang = this.persianDateTimePickerService.languageLocaleSignal() ||
+      this.persianDateTimePickerService.englishLocale;
   }
 }

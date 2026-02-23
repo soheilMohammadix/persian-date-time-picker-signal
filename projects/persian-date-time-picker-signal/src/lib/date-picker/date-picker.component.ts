@@ -21,9 +21,10 @@ import {
   untracked,
   viewChild,
   viewChildren,
+  booleanAttribute
 } from "@angular/core";
-import {toSignal} from "@angular/core/rxjs-interop";
-import {BreakpointObserver} from "@angular/cdk/layout";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { BreakpointObserver } from "@angular/cdk/layout";
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -34,10 +35,10 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
 } from "@angular/forms";
-import {slideMotion, slideUpMotion} from "../utils/animation/slide";
-import {DateAdapter, GregorianDateAdapter, JalaliDateAdapter,} from "../date-adapter";
-import {CustomLabels, DateRange, LanguageLocale, RangeInputLabels,} from "../utils/models";
-import {DatePickerPopupComponent} from "../date-picker-popup/date-picker-popup.component";
+import { slideMotion, slideUpMotion } from "../utils/animation/slide";
+import { DateAdapter, GregorianDateAdapter, JalaliDateAdapter, } from "../date-adapter";
+import { CustomLabels, DateRange, LanguageLocale, RangeInputLabels, } from "../utils/models";
+import { DatePickerPopupComponent } from "../date-picker-popup/date-picker-popup.component";
 import {
   CdkOverlayOrigin,
   ConnectedOverlayPositionChange,
@@ -51,13 +52,13 @@ import {
   DEFAULT_DATE_PICKER_POSITIONS,
   NzConnectedOverlayDirective,
 } from "../utils/overlay/overlay";
-import {DOCUMENT, NgTemplateOutlet} from "@angular/common";
-import {DestroyService, PersianDateTimePickerService,} from "../persian-date-time-picker.service";
-import {fromEvent, map, Subscription, takeUntil} from "rxjs";
-import {CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat,} from "../utils/types";
-import {CustomTemplate} from "../utils/template.directive";
-import {DateMaskDirective} from "../utils/input-mask.directive";
-import {MobileDatePickerComponent} from "../mobile-date-picker/mobile-date-picker.component";
+import { DOCUMENT, NgTemplateOutlet } from "@angular/common";
+import { DestroyService, PersianDateTimePickerService, } from "../persian-date-time-picker.service";
+import { fromEvent, map, Subscription, takeUntil } from "rxjs";
+import { CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat, } from "../utils/types";
+import { CustomTemplate } from "../utils/template.directive";
+import { DateMaskDirective } from "../utils/input-mask.directive";
+import { MobileDatePickerComponent } from "../mobile-date-picker/mobile-date-picker.component";
 
 @Component({
   selector: "persian-date-picker",
@@ -93,9 +94,9 @@ import {MobileDatePickerComponent} from "../mobile-date-picker/mobile-date-picke
 export class DatePickerComponent
   implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
   // ========== Input Signals ==========
-  rtl = input(false);
+  rtl = input(false, { transform: booleanAttribute });
   mode = input<DatePickerMode>("day");
-  isRange = input(false);
+  isRange = input(false, { transform: booleanAttribute });
   customLabels = input<Array<CustomLabels>>([]);
   calendarType = input<CalendarType>("gregorian");
   lang = input<LanguageLocale | undefined>(undefined);
@@ -104,18 +105,18 @@ export class DatePickerComponent
   rangeInputLabels = input<RangeInputLabels | undefined>(undefined);
   inputLabel = input<string | undefined>(undefined);
   placement = input<Placement>("bottomRight");
-  disabled = input(false);
-  isInline = input(false);
-  showSidebar = input(true);
-  showToday = input(false);
+  disabled = input(false, { transform: booleanAttribute });
+  isInline = input(false, { transform: booleanAttribute });
+  showSidebar = input(true, { transform: booleanAttribute });
+  showToday = input(false, { transform: booleanAttribute });
   valueFormat = input<ValueFormat>("gregorian");
-  disableInputMask = input(false);
+  disableInputMask = input(false, { transform: booleanAttribute });
   disabledDates = input<Array<Date | string>>([]);
   disabledDatesFilter = input<((date: Date) => boolean) | undefined>(undefined);
   disabledTimesFilter = input<((date: Date) => boolean) | undefined>(undefined);
-  allowEmpty = input(false);
-  readOnly = input(false);
-  readOnlyInput = input(false);
+  allowEmpty = input(false, { transform: booleanAttribute });
+  readOnly = input(false, { transform: booleanAttribute });
+  readOnlyInput = input(false, { transform: booleanAttribute });
   minDate = input<Date | string | null>(null);
   maxDate = input<Date | string | null>(null);
   format = input("yyyy/MM/dd");
@@ -169,7 +170,7 @@ export class DatePickerComponent
     this.breakpointObserver
       .observe("(max-width: 768.98px)")
       .pipe(map((result) => result.matches)),
-    {initialValue: false},
+    { initialValue: false },
   );
 
   parsedMinDate = computed(() => {
@@ -380,7 +381,7 @@ export class DatePickerComponent
       if (value) {
         const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        
+
         processedValue = value.replace(/[۰-۹]/g, (match) => {
           const index = persianNumbers.indexOf(match);
           return index !== -1 ? latinNumbers[index] : match;
@@ -470,9 +471,9 @@ export class DatePickerComponent
       const formattedValue = this.dateAdapter!.format(date, this.format());
       this.form!.get("startDateInput")?.setValue(
         this.convertNumbersForDisplay(formattedValue),
-        {emitEvent: false},
+        { emitEvent: false },
       );
-      this.form!.get("endDateInput")?.setValue("", {emitEvent: false});
+      this.form!.get("endDateInput")?.setValue("", { emitEvent: false });
       this.isInternalChange = false;
     } else {
       this.selectedEndDate.set(date);
@@ -480,7 +481,7 @@ export class DatePickerComponent
       const formattedValue = this.dateAdapter!.format(date, this.format());
       this.form!.get("endDateInput")?.setValue(
         this.convertNumbersForDisplay(formattedValue),
-        {emitEvent: false},
+        { emitEvent: false },
       );
       this.isInternalChange = false;
       this.emitValueIfChanged();
@@ -495,7 +496,7 @@ export class DatePickerComponent
     this.isInternalChange = true;
     this.form!.get("dateInput")?.setValue(
       this.convertNumbersForDisplay(formattedDate),
-      {emitEvent: false}
+      { emitEvent: false }
     );
     this.isInternalChange = false;
     this.emitValueIfChanged();
@@ -514,7 +515,7 @@ export class DatePickerComponent
     this.isInternalChange = true;
     this.form!.get("startDateInput")?.setValue(
       this.convertNumbersForDisplay(startFormatted),
-      {emitEvent: false}
+      { emitEvent: false }
     );
 
     if (dateRange.end) {
@@ -523,7 +524,7 @@ export class DatePickerComponent
       const endFormatted = this.dateAdapter!.format(end!, this.format());
       this.form!.get("endDateInput")?.setValue(
         this.convertNumbersForDisplay(endFormatted),
-        {emitEvent: false}
+        { emitEvent: false }
       );
       this.isInternalChange = false;
       this.emitValueIfChanged();
@@ -627,7 +628,7 @@ export class DatePickerComponent
       adjustedDate.setHours(date.getHours());
       adjustedDate.setMinutes(date.getMinutes());
       adjustedDate.setSeconds(date.getSeconds());
-      let {normalizedDate} = this.validateAndNormalizeTime(adjustedDate);
+      let { normalizedDate } = this.validateAndNormalizeTime(adjustedDate);
       adjustedDate = normalizedDate;
     }
     return adjustedDate;
@@ -765,7 +766,7 @@ export class DatePickerComponent
 
     const format = this.getFormatForMode();
     if (!this.dateAdapter.isValidFormat(value, format)) {
-      return {invalidFormat: true};
+      return { invalidFormat: true };
     }
     return null;
   }
@@ -834,20 +835,41 @@ export class DatePickerComponent
     const inputValue = this.getInputValue(inputType);
 
     if (typeof inputValue === "string" && !this.isOpen()) {
-      const correctedValue = this.validateAndCorrectInput(inputValue);
-      // Apply the corrected value directly to the input field
-      this.form!.get("dateInput")?.setValue(correctedValue, {emitEvent: false});
-      
+      let correctedValue = inputValue;
+
+      if (!inputValue && this.allowEmpty()) {
+        correctedValue = "";
+      } else {
+        correctedValue = this.validateAndCorrectInput(inputValue);
+      }
+
+      // Apply the corrected value directly to the appropriate input field
+      if (this.isRange()) {
+        if (inputType === "start") {
+          this.form!.get("startDateInput")?.setValue(correctedValue, { emitEvent: false });
+        } else if (inputType === "end") {
+          this.form!.get("endDateInput")?.setValue(correctedValue, { emitEvent: false });
+        }
+      } else {
+        this.form!.get("dateInput")?.setValue(correctedValue, { emitEvent: false });
+      }
+
       if (correctedValue !== inputValue) {
-        if (inputValue) {
+        if (inputValue || !this.allowEmpty()) {
           this.handleCorrectedValue(inputType, correctedValue);
-        } else if (!this.allowEmpty()) {
-          this.handleCorrectedValue(inputType, correctedValue);
-        } else {
-          this.selectedDate.set(null);
-          this.onChange(inputValue);
         }
       }
+
+      if (!inputValue && this.allowEmpty()) {
+        if (this.isRange()) {
+          if (inputType === "start") this.selectedStartDate.set(null);
+          if (inputType === "end") this.selectedEndDate.set(null);
+        } else {
+          this.selectedDate.set(null);
+        }
+        this.onChange(null);
+      }
+
       this.onBlur.emit({
         input: inputType,
         event,
@@ -873,7 +895,7 @@ export class DatePickerComponent
     if (value) {
       const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
       const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      
+
       processedValue = value.replace(/[۰-۹]/g, (match) => {
         const index = persianNumbers.indexOf(match);
         return index !== -1 ? latinNumbers[index] : match;
@@ -915,7 +937,7 @@ export class DatePickerComponent
     if (correctedValue) {
       const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
       const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      
+
       processedValue = correctedValue.replace(/[۰-۹]/g, (match) => {
         const index = persianNumbers.indexOf(match);
         return index !== -1 ? latinNumbers[index] : match;
@@ -954,7 +976,7 @@ export class DatePickerComponent
     if (correctedValue) {
       const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
       const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      
+
       processedValue = correctedValue.replace(/[۰-۹]/g, (match) => {
         const index = persianNumbers.indexOf(match);
         return index !== -1 ? latinNumbers[index] : match;
@@ -1018,21 +1040,21 @@ export class DatePickerComponent
         const formattedValue = this.dateAdapter.format(this.selectedStartDate()!, this.format());
         this.form!.get("startDateInput")?.setValue(
           this.convertNumbersForDisplay(formattedValue),
-          {emitEvent: false},
+          { emitEvent: false },
         );
       }
       if (this.selectedEndDate()) {
         const formattedValue = this.dateAdapter.format(this.selectedEndDate()!, this.format());
         this.form!.get("endDateInput")?.setValue(
           this.convertNumbersForDisplay(formattedValue),
-          {emitEvent: false},
+          { emitEvent: false },
         );
       }
     } else if (this.selectedDate()) {
       const formattedValue = this.dateAdapter.format(this.selectedDate()!, this.format());
       this.form!.get("dateInput")?.setValue(
         this.convertNumbersForDisplay(formattedValue),
-        {emitEvent: false},
+        { emitEvent: false },
       );
     }
     this.isInternalChange = false;
@@ -1082,7 +1104,7 @@ export class DatePickerComponent
           const formattedValue = this.dateAdapter.format(startDate, this.format());
           this.form!.get("startDateInput")?.setValue(
             this.convertNumbersForDisplay(formattedValue),
-            {emitEvent: false},
+            { emitEvent: false },
           );
         }
 
@@ -1091,7 +1113,7 @@ export class DatePickerComponent
           const formattedValue = this.dateAdapter.format(endDate, this.format());
           this.form!.get("endDateInput")?.setValue(
             this.convertNumbersForDisplay(formattedValue),
-            {emitEvent: false},
+            { emitEvent: false },
           );
         }
       } else {
@@ -1101,7 +1123,7 @@ export class DatePickerComponent
           const formattedValue = this.dateAdapter.format(parsedDate, this.format());
           this.form!.get("dateInput")?.setValue(
             this.convertNumbersForDisplay(formattedValue),
-            {emitEvent: false},
+            { emitEvent: false },
           );
         }
       }
@@ -1119,9 +1141,9 @@ export class DatePickerComponent
     this.selectedDate.set(null);
     this.selectedStartDate.set(null);
     this.selectedEndDate.set(null);
-    this.form!.get("dateInput")?.setValue("", {emitEvent: false});
-    this.form!.get("startDateInput")?.setValue("", {emitEvent: false});
-    this.form!.get("endDateInput")?.setValue("", {emitEvent: false});
+    this.form!.get("dateInput")?.setValue("", { emitEvent: false });
+    this.form!.get("startDateInput")?.setValue("", { emitEvent: false });
+    this.form!.get("endDateInput")?.setValue("", { emitEvent: false });
     this.lastEmittedValue = null;
     this.isInternalChange = false;
     this.changeDetectorRef.markForCheck();
@@ -1231,17 +1253,17 @@ export class DatePickerComponent
 
   private convertNumbersForDisplay(value: string): string {
     if (!value) return '';
-    
+
     // Check if we should use Persian numbers
     const locale = this.effectiveLang();
     if (!locale?.usePersianNumbers) {
       return value; // Return original for English
     }
-    
+
     // Convert Latin numbers to Persian/Arabic numbers
     const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     const latinNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    
+
     return value.replace(/[0-9]/g, (match) => {
       const index = latinNumbers.indexOf(match);
       return index !== -1 ? persianNumbers[index] : match;

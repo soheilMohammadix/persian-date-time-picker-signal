@@ -1,6 +1,6 @@
 {
   "name": "persian-date-time-picker-signal",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A lightweight, customizable Angular date/time picker with full Persian (Jalali/Shamsi) calendar support. Supports date ranges, time selection, and seamless integration with Angular Material.",
   "author": "Soheil Mohammadi",
   "license": "MIT",
@@ -36,11 +36,11 @@
   },
   "private": false,
   "peerDependencies": {
-    "@angular/common": "^20.0.0 || ^21.0.0",
-    "@angular/core": "^20.0.0 || ^21.0.0",
-    "@angular/forms": "^20.0.0 || ^21.0.0",
-    "@angular/cdk": "^20.0.0 || ^21.0.0",
-    "@angular/animations": "^20.0.0 || ^21.0.0",
+    "@angular/common": ">=20.0.0",
+    "@angular/core": ">=20.0.0",
+    "@angular/forms": ">=20.0.0",
+    "@angular/cdk": ">=20.0.0",
+    "@angular/animations": ">=20.0.0",
     "date-fns": "^4.1.0",
     "date-fns-jalali": "^4.1.0-0"
   },

@@ -9,7 +9,7 @@
     "test": "ng test",
     "build:lib": "ng build persian-date-time-picker-signal",
     "publish:lib": "npm publish ./dist/persian-date-time-picker-signal",
-    "publish": "npm run build:lib && npm publish ./dist/persian-date-time-picker-signal"
+    "publish": "bun run build:lib && npm publish ./dist/persian-date-time-picker-signal"
   },
   "private": true,
   "dependencies": {
