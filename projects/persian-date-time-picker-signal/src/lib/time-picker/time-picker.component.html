@@ -2,7 +2,7 @@
   <!-- Regular input mode -->
   @if (!inline()) {
     <div [class.disabled]="disabled()" [class.focus]="isOpen()" class="input-wrapper">
-      <input #timePickerInput (focus)="onFocusInput()" [attr.disabled]="disabled()? 'disabled':null"
+      <input #timePickerInput (focus)="onFocusInput()" [attr.disabled]="disabled()? 'disabled':null" autocomplete="off"
         [class.disabled]="disabled()" [class.focus]="isOpen()" [disableInputMask]="disableInputMask()"
         [dtp-dateMask]="displayFormat()" [placeholder]="effectivePlaceholder()"
         [readonly]="readOnly() || readOnlyInput()" class="time-picker-input" formControlName="timeInput" type="text">
