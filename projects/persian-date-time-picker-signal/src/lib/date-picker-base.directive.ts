@@ -52,6 +52,7 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
     dateSelected = output<Date>();
     dateRangeSelected = output<DateRange>();
     closePicker = output<void>();
+    clearSelected = output<void>();
 
     // ========== State Signals ==========
     currentDate = signal<Date | undefined>(undefined);
@@ -821,6 +822,11 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
             this.dateSelected.emit(selected);
             this.closeDatePicker();
         }
+    }
+
+    onClearClick() {
+        this.clearSelected.emit();
+        this.closeDatePicker();
     }
 
     setInitialDate(): void {

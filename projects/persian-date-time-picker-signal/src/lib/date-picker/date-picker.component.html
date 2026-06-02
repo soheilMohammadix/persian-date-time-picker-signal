@@ -55,7 +55,7 @@
       [class.persian-date-picker-dropdown-placement-topRight]="currentPositionY === 'top' && currentPositionX === 'end'"
       [class.persian-date-picker-dropdown-range]="isRange()" [class.persian-date-picker-dropdown-rtl]="rtl()"
       class="dp-dropdown">
-      <persian-date-picker-popup (clickInside)="focus()" (closePicker)="close()"
+      <persian-date-picker-popup (clickInside)="focus()" (clearSelected)="onClear()" (closePicker)="close()"
         (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
         [@slideMotion]="'enter'" [activeInput]="activeInput()" [attr.disabled]="disabled()? 'disabled':null"
         [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
@@ -79,7 +79,7 @@
       [class.persian-date-picker-dropdown-placement-topRight]="currentPositionY === 'top' && currentPositionX === 'end'"
       [class.persian-date-picker-dropdown-range]="isRange()" [class.persian-date-picker-dropdown-rtl]="rtl()"
       class="dp-dropdown">
-      <persian-date-picker-popup (clickInside)="focus()" (closePicker)="close()"
+      <persian-date-picker-popup (clickInside)="focus()" (clearSelected)="onClear()" (closePicker)="close()"
         (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
         [@slideMotion]="'enter'" [activeInput]="activeInput()" [attr.disabled]="disabled()? 'disabled':null"
         [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
@@ -96,7 +96,7 @@
       <!-- Mobile Backdrop -->
       <div class="mobile-backdrop" (click)="close()"></div>
 
-      <mobile-date-picker (closePicker)="close()" (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
+      <mobile-date-picker (clearSelected)="onClear()" (closePicker)="close()" (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
         [activeInput]="activeInput()" [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
         [dateFormat]="extractDateFormat(format())" [disabledDatesFilter]="disabledDatesFilter()" [disabledDates]="disabledDates()"
         [disabledTimesFilter]="disabledTimesFilter()" [footerDescription]="footerDescription()" [isRange]="isRange()"

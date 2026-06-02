@@ -59,11 +59,11 @@ export class DatePickerPopupComponent
       );
       if (selectedElement) {
         selectedElement.scrollIntoView({
-          behavior: "smooth",
+          behavior: "instant",
           block: "center",
         });
       }
-    }, 0);
+    }, 200);
   }
 
   determineScrollItemId(id: number | null): number | null {

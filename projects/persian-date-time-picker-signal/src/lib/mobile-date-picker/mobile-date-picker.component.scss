@@ -515,7 +515,8 @@
     gap: 8px;
 
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       flex: 1;
       border-radius: 6px;
       font-size: 14px;
@@ -560,6 +561,22 @@
 
       &:active {
         background-color: var(--mobile-surface-color);
+      }
+    }
+
+    .clear-button {
+      background: var(--mobile-background-color);
+      border-color: var(--mobile-border-color);
+      color: var(--mobile-text-color-light);
+
+      &:hover {
+        background-color: #fff3e0;
+        border-color: #e65100;
+        color: #e65100;
+      }
+
+      &:active {
+        background-color: #fff3e0;
       }
     }
   }
@@ -660,7 +677,8 @@ button:focus-visible {
 
     .today-button,
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       padding: 10px;
       font-size: 13px;
       min-height: 40px;
@@ -707,7 +725,8 @@ button:focus-visible {
 
     .today-button,
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       padding: 8px;
       font-size: 12px;
       min-height: 36px;
@@ -768,7 +787,8 @@ button:focus-visible {
 
     .today-button,
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       padding: 12px;
       font-size: 14px;
     }

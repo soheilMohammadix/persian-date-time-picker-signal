@@ -42,6 +42,7 @@ export interface LanguageLocale {
   am: string;
   ok: string;
   cancel: string;
+  clear: string;
   now: string;
   hour: string
   minute: string
@@ -73,6 +74,7 @@ export class PersianLocale implements LanguageLocale {
   am = "ق.ظ";
   ok = "تایید";
   cancel = "لغو";
+  clear = "پاک کردن";
   now = "اکنون";
   hour = 'ساعت'
   minute = 'دقیقه'
@@ -104,6 +106,7 @@ export class EnglishLocale implements LanguageLocale {
   am = "AM";
   ok = "Ok";
   cancel = "Cancel";
+  clear = "Clear";
   now = "Now";
   hour = 'Hour'
   minute = 'Minute'

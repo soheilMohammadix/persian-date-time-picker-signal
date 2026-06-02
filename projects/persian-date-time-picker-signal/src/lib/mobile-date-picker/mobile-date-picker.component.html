@@ -142,6 +142,9 @@
       </button>
     }
     <div class="action-buttons-group">
+      <button (click)="onClearClick()" class="clear-button" tabindex="-1">
+        {{ lang?.clear }}
+      </button>
       <button (click)="closeDatePicker()" class="cancel-button" tabindex="-1">
         {{ lang?.cancel }}
       </button>

@@ -114,11 +114,14 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-      <button (click)="onOkClick()" class="ok-button" tabindex="-1">
-        {{ lang?.ok }}
+      <button (click)="onClearClick()" class="clear-button" tabindex="-1">
+        {{ lang?.clear }}
       </button>
       <button (click)="closeDatePicker()" class="cancel-button" tabindex="-1">
         {{ lang?.cancel }}
+      </button>
+      <button (click)="onOkClick()" class="ok-button" tabindex="-1">
+        {{ lang?.ok }}
       </button>
     </div>
   </div>

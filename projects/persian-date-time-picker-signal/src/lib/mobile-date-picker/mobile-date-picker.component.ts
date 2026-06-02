@@ -43,7 +43,8 @@ export class MobileDatePickerComponent extends PersianDatePickerBase {
     const adapter = this.dateAdapterSignal();
     if (!adapter) return '';
 
-    const date = this.selectedDate() || this.selectedStartDate() || adapter.today();
+    const date = this.selectedDate() || this.selectedStartDate();
+    if (!date) return '---';
     return adapter.format(date, this.dateFormat() || 'yyyy/MM/dd');
   }
 
@@ -51,7 +52,8 @@ export class MobileDatePickerComponent extends PersianDatePickerBase {
     const adapter = this.dateAdapterSignal();
     if (!adapter) return '';
 
-    const date = this.selectedDate() || this.selectedStartDate() || adapter.today();
+    const date = this.selectedDate() || this.selectedStartDate();
+    if (!date) return '--:--';
     return adapter.format(date, this.timeDisplayFormat() || 'HH:mm');
   }
 }

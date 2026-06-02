@@ -46,7 +46,7 @@ $success-color: #4caf50;
     max-width: 600px;
     border: 1px solid $border-color;
     background: $background-color;
-    min-height: 480px;
+    min-height: auto;
   }
 
   &-content {
@@ -428,6 +428,23 @@ $success-color: #4caf50;
   &:hover {
     background-color: $primary-light;
     color: $primary-color;
+  }
+}
+
+.clear-button {
+  background: none;
+  border: 1px solid $border-color;
+  color: $text-color-light;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #fff3e0;
+    color: #e65100;
   }
 }
 
