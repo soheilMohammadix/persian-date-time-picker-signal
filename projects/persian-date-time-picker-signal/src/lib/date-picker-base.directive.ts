@@ -453,6 +453,8 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
             const yearStart = yearList[0] - 15;
             id = yearList[0] - 1;
             this.currentDate.set(this.dateAdapter!.createDate(yearList[0] - 1, 0, 1));
+            // verify
+            const newYearList = this.yearList();
         }
 
         this.scrollToSelectedItem(id!);
@@ -475,6 +477,8 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
             const yearStart = yearList[14] + 1;
             id = yearStart;
             this.currentDate.set(this.dateAdapter!.createDate(yearList[14] + 1, 0, 1));
+            // verify
+            const newYearList = this.yearList();
         }
 
         this.scrollToSelectedItem(id!);
@@ -499,8 +503,11 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
     @HostListener('touchstart', ['$event'])
     @HostListener('mousedown', ['$event'])
     handleTouchStart(event: TouchEvent | MouseEvent): void {
-        this.touchStartX = 'touches' in event ? (event as TouchEvent).touches[0].clientX : (event as MouseEvent).clientX;
-        this.touchStartY = 'touches' in event ? (event as TouchEvent).touches[0].clientY : (event as MouseEvent).clientY;
+        const isTouch = 'touches' in event;
+        const x = isTouch ? (event as TouchEvent).touches[0].clientX : (event as MouseEvent).clientX;
+        const y = isTouch ? (event as TouchEvent).touches[0].clientY : (event as MouseEvent).clientY;
+        this.touchStartX = x;
+        this.touchStartY = y;
         this.isSwiping = true;
     }
 
@@ -509,11 +516,13 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
     handleTouchMove(event: TouchEvent | MouseEvent): void {
         if (!this.isSwiping) return;
 
-        const touchEndX = 'touches' in event ? (event as TouchEvent).touches[0].clientX : (event as MouseEvent).clientX;
-        const touchEndY = 'touches' in event ? (event as TouchEvent).touches[0].clientY : (event as MouseEvent).clientY;
+        const isTouch = 'touches' in event;
+        const touchEndX = isTouch ? (event as TouchEvent).touches[0].clientX : (event as MouseEvent).clientX;
+        const touchEndY = isTouch ? (event as TouchEvent).touches[0].clientY : (event as MouseEvent).clientY;
 
         const diffX = this.touchStartX - touchEndX;
         const diffY = this.touchStartY - touchEndY;
+
 
         if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
             event.preventDefault();
@@ -655,7 +664,9 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
 
     isPrevMonthDisabled(): boolean {
         const min = this.minDate();
-        if (!min) return false;
+        if (!min) {
+            return false;
+        }
 
         const minYear = this.dateAdapter!.getYear(min)!;
 
@@ -667,7 +678,9 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
                 const prevYear = this.dateAdapter!.getYear(this.currentDate()!)! - 1;
                 return minYear > prevYear;
             case "years":
-                return minYear > this.yearList()[this.yearList().length - 1];
+                const lastYear = this.yearList()[this.yearList().length - 1];
+                const result = minYear > lastYear;
+                return result;
             default:
                 return false;
         }
@@ -675,7 +688,9 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
 
     isNextMonthDisabled(): boolean {
         const max = this.maxDate();
-        if (!max) return false;
+        if (!max) {
+            return false;
+        }
 
         const maxYear = this.dateAdapter!.getYear(max)!;
 
@@ -687,7 +702,9 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
                 const nextYear = this.dateAdapter!.getYear(this.currentDate()!)! + 1;
                 return maxYear < nextYear;
             case "years":
-                return maxYear < this.yearList()[0];
+                const firstYear = this.yearList()[0];
+                const result = maxYear < firstYear;
+                return result;
             default:
                 return false;
         }

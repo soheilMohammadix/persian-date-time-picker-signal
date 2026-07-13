@@ -122,7 +122,9 @@ input.focus {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100vh; // fallback for older browsers
+  height: 100dvh; // iOS Safari: dynamic viewport height — shrinks with the address bar so the
+                 // fixed backdrop never exceeds the visible area (fixes the backdrop-filter blur bug)
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 9998;
   backdrop-filter: blur(2px);

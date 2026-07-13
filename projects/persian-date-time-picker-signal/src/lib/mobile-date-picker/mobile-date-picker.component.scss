@@ -32,8 +32,10 @@
 .mobile-date-picker {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  max-height: 85vh;
+  height: 80vh; // fallback for older browsers
+  height: 80dvh; // iOS Safari: dynamic viewport height — keeps the dialog within the visible area
+  max-height: 85vh; // fallback for older browsers
+  max-height: 85dvh; // iOS Safari: dynamic viewport height
   max-width: 90vw;
   min-width: 90vw;
   min-height: 400px;

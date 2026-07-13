@@ -96,7 +96,8 @@ input {
   min-width: 200px;
   overflow: hidden;
   margin-block: 3px;
-  height: 40vh;
+  height: 40vh; // fallback for older browsers
+  height: 40dvh; // iOS Safari: dynamic viewport height
   //max-height: 280px;
 
   &.inline {
@@ -266,7 +267,8 @@ button {
     min-width: 200px;
     overflow: hidden;
     margin-block: 3px;
-    height: 57vh;
+    height: 57vh; // fallback for older browsers
+    height: 57dvh; // iOS Safari: dynamic viewport height
     //max-height: 280px;
   }
   .time-header {

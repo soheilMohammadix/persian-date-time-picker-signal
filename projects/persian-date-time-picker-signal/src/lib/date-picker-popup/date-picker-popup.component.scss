@@ -112,8 +112,10 @@ $success-color: #4caf50;
 // Mobile view specific styles
 .mobile-view {
   .date-picker-content {
-    height: 100vh;
-    max-height: 100vh;
+    height: 100vh; // fallback for older browsers
+    height: 100dvh; // iOS Safari: dynamic viewport height
+    max-height: 100vh; // fallback for older browsers
+    max-height: 100dvh; // iOS Safari: dynamic viewport height
   }
 
   .main-content {
