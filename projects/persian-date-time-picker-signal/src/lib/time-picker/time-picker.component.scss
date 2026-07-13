@@ -263,7 +263,7 @@ button {
     border-radius: 8px;
     border: unset;
     //box-shadow: 0 6px 16px 0 $box-shadow-color;
-    width: 90vw;
+    width: 90%; // not 90vw — `vw` overflows the visible width on iOS Safari (same zoom bug)
     min-width: 200px;
     overflow: hidden;
     margin-block: 3px;

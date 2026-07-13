@@ -117,18 +117,23 @@ input.focus {
 }
 
 // Mobile backdrop styles
+// NOTE: backdrop-filter intentionally omitted — on iOS Safari, backdrop-filter on a
+// full-screen position:fixed element renders transformed/fixed siblings (the dialog uses
+// translate(-50%, -50%)) at the wrong scale/position ("zoomed in" compositing bug).
+// The semi-opaque background-color below provides the dimming effect on its own.
+// NOTE: use `inset: 0` (not `width: 100vw` / `height: 100vh`) — `vw`/`vh` resolve against the
+// iOS Safari *large* viewport (wider/taller than the visible area), causing horizontal overflow
+// that Safari compensates for by shifting/zooming the layout → the dialog renders "zoomed in".
+// `inset: 0` stretches a fixed element to the visible viewport with no overflow.
 .mobile-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh; // fallback for older browsers
-  height: 100dvh; // iOS Safari: dynamic viewport height — shrinks with the address bar so the
-                 // fixed backdrop never exceeds the visible area (fixes the backdrop-filter blur bug)
+  top: 0;        // fallback for browsers without `inset` support
+  left: 0;       // fallback
+  right: 0;       // fallback
+  bottom: 0;      // fallback
+  inset: 0;       // modern: stretches to the visible viewport (no vw/vh overflow on iOS Safari)
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 9998;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
 }
 
 // Desktop backdrop styles

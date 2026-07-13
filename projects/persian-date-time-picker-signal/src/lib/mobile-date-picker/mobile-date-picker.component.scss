@@ -36,9 +36,13 @@
   height: 80dvh; // iOS Safari: dynamic viewport height — keeps the dialog within the visible area
   max-height: 85vh; // fallback for older browsers
   max-height: 85dvh; // iOS Safari: dynamic viewport height
-  max-width: 90vw;
-  min-width: 90vw;
-  min-height: 400px;
+  max-width: 90%;   // not 90vw — `vw` overflows the visible width on iOS Safari (causes the
+                    // centered dialog to render "zoomed in"); `%` on a fixed element = visible width
+  min-width: 90%;   // same as above
+  min-height: 400px; // fallback for older browsers
+  min-height: min(400px, 80dvh); // cap on small viewports so the dialog never exceeds the
+                                 // visible area (prevents the translate(-50%,-50%) from cropping
+                                 // top/bottom, which read as "zoomed in")
   background: var(--mobile-background-color);
   position: fixed;
   top: 50%;
