@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   HostListener,
   output,
@@ -27,6 +28,19 @@ import { takeUntil } from "rxjs";
 export class DatePickerPopupComponent
   extends PersianDatePickerBase
   implements AfterViewInit {
+
+  constructor() {
+    super();
+    // Reactively update the time picker display whenever the selected date changes.
+    // (ngAfterViewInit only fires once; this effect keeps the time picker in sync
+    //  when the user navigates the calendar or picks a new date.)
+    effect(() => {
+      const date = this.selectedDate();
+      if (date && this.timePicker()) {
+        this.setTimePickerDate(date);
+      }
+    });
+  }
 
   // ========== Output Signals ==========
   clickInside = output<boolean>();

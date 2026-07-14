@@ -679,9 +679,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       if (time.period === lang.am && hours === 12) hours = 0;
     }
 
+    // Use selectedDateInput() signal (synchronous) to avoid race condition
+    // with the async effect that writes to _selectedDate
     let date = this._value instanceof Date ?
       adapter.clone(this._value) :
-      this._selectedDate;
+      (this.selectedDateInput() || this._selectedDate);
 
     // Only update time components of the date
     date = adapter.setHours(date!, hours);
