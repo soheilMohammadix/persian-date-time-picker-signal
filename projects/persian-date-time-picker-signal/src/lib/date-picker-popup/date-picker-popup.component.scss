@@ -1,18 +1,4 @@
-// MUI-inspired mobile date picker variables
-$primary-color: #1976d2;
-$primary-hover: #1565c0;
-$primary-light: #e3f2fd;
-$primary-medium: #bbdefb;
-$secondary-color: #424242;
-$background-color: #ffffff;
-$border-color: #e0e0e0;
-$text-color: #212121;
-$text-color-light: #757575;
-$shadow-color: rgba(0, 0, 0, 0.2);
-$today-border: #1976d2;
-$today-dot: #1976d2;
-$disabled-color: #bdbdbd;
-$success-color: #4caf50;
+@use '../colors';
 
 :host {
   * {
@@ -39,13 +25,13 @@ $success-color: #4caf50;
     display: flex;
     flex-direction: column;
     border-radius: 8px;
-    box-shadow: 0 4px 20px $shadow-color;
+    box-shadow: 0 4px 20px var(--dtp-shadow);
     overflow: hidden;
     z-index: 1000;
     width: 100%;
     max-width: 600px;
-    border: 1px solid $border-color;
-    background: $background-color;
+    border: 1px solid var(--dtp-border);
+    background: var(--dtp-surface);
     min-height: auto;
   }
 
@@ -58,7 +44,7 @@ $success-color: #4caf50;
 
 
   &-footer {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid var(--dtp-border);
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -89,20 +75,20 @@ $success-color: #4caf50;
 // Time Picker Section (Desktop)
 .time-picker-section {
   width: 200px;
-  border-left: 1px solid $border-color;
+  border-left: 1px solid var(--dtp-border);
   padding: 16px;
   display: flex;
   flex-direction: column;
 
   .time-picker-header {
     padding-bottom: 12px;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid var(--dtp-border);
     margin-bottom: 16px;
 
     .time-picker-title {
       font-size: 14px;
       font-weight: 600;
-      color: $text-color;
+      color: var(--dtp-text);
       text-align: center;
       display: block;
     }
@@ -143,14 +129,14 @@ $success-color: #4caf50;
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  border-bottom: 1px solid $border-color;
-  background: $background-color;
+  border-bottom: 1px solid var(--dtp-border);
+  background: var(--dtp-surface);
 
   .close-button {
     background: none;
     border: none;
     font-size: 24px;
-    color: $text-color;
+    color: var(--dtp-text);
     cursor: pointer;
     width: 40px;
     height: 40px;
@@ -161,7 +147,7 @@ $success-color: #4caf50;
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: $primary-light;
+      background-color: var(--dtp-primary-light);
     }
   }
 
@@ -174,14 +160,14 @@ $success-color: #4caf50;
 
     .month-name,
     .year {
-      color: $text-color;
+      color: var(--dtp-text);
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
       transition: color 0.3s;
 
       &:hover {
-        color: $primary-color;
+        color: var(--dtp-primary);
       }
     }
   }
@@ -194,7 +180,7 @@ $success-color: #4caf50;
       background: none;
       border: none;
       font-size: 20px;
-      color: $text-color;
+      color: var(--dtp-text);
       cursor: pointer;
       width: 40px;
       height: 40px;
@@ -209,7 +195,7 @@ $success-color: #4caf50;
       //}
 
       &:hover {
-        background-color: $primary-light;
+        background-color: var(--dtp-primary-light);
       }
 
       &:disabled {
@@ -228,7 +214,7 @@ $success-color: #4caf50;
     text-align: center;
     padding: 0 8px 8px;
     font-size: 12px;
-    color: $text-color-light;
+    color: var(--dtp-text-secondary);
     font-weight: 500;
   }
 
@@ -261,7 +247,7 @@ $success-color: #4caf50;
   cursor: pointer;
   border-radius: 8px;
   font-size: 14px;
-  color: $text-color;
+  color: var(--dtp-text);
   transition: background-color 0.3s, color 0.3s;
   min-width: 40px;
   min-height: 40px;
@@ -270,33 +256,33 @@ $success-color: #4caf50;
   justify-content: center;
 
   &:hover:not(.disabled) {
-    background-color: $primary-light;
+    background-color: var(--dtp-primary-light);
   }
 
   &.different-month {
-    color: $text-color-light;
+    color: var(--dtp-text-secondary);
     opacity: 0.5;
   }
 
   &.selected, &.range-end.in-range, &.range-start.in-range {
-    background-color: $primary-color;
+    background-color: var(--dtp-primary);
     color: white;
     font-weight: 500;
   }
 
   &.in-range {
-    background-color: $primary-light;
-    color: $primary-color;
+    background-color: var(--dtp-primary-light);
+    color: var(--dtp-primary);
   }
 
   &.today {
-    border: 2px solid $today-border;
+    border: 2px solid var(--dtp-today-ring);
     font-weight: 500;
   }
 
   &.disabled {
-    color: $disabled-color;
-    background: #fafafa;
+    color: var(--dtp-disabled-text);
+    background: var(--dtp-disabled);
     cursor: not-allowed;
     opacity: 1;
   }
@@ -310,7 +296,7 @@ $success-color: #4caf50;
   cursor: pointer;
   border-radius: 8px;
   font-size: 14px;
-  color: $text-color;
+  color: var(--dtp-text);
   transition: background-color 0.3s, color 0.3s;
   min-width: 70px;
   min-height: 40px;
@@ -319,18 +305,18 @@ $success-color: #4caf50;
   justify-content: center;
 
   &:hover:not(.disabled) {
-    background-color: $primary-light;
+    background-color: var(--dtp-primary-light);
   }
 
   &.selected {
-    background-color: $primary-color;
+    background-color: var(--dtp-primary);
     color: white;
     font-weight: 500;
   }
 
   &.disabled {
-    color: $disabled-color;
-    background: #fafafa;
+    color: var(--dtp-disabled-text);
+    background: var(--dtp-disabled);
     cursor: not-allowed;
   }
 }
@@ -343,7 +329,7 @@ $success-color: #4caf50;
   cursor: pointer;
   border-radius: 8px;
   font-size: 14px;
-  color: $text-color;
+  color: var(--dtp-text);
   transition: background-color 0.3s, color 0.3s;
   min-width: 70px;
   min-height: 40px;
@@ -352,18 +338,18 @@ $success-color: #4caf50;
   justify-content: center;
 
   &:hover:not(.disabled) {
-    background-color: $primary-light;
+    background-color: var(--dtp-primary-light);
   }
 
   &.selected {
-    background-color: $primary-color;
+    background-color: var(--dtp-primary);
     color: white;
     font-weight: 500;
   }
 
   &.disabled {
-    color: $disabled-color;
-    background: #fafafa;
+    color: var(--dtp-disabled-text);
+    background: var(--dtp-disabled);
     cursor: not-allowed;
   }
 }
@@ -377,8 +363,8 @@ $success-color: #4caf50;
 
 .today-button {
   background: none;
-  border: 1px solid $primary-color;
-  color: $primary-color;
+  border: 1px solid var(--dtp-primary);
+  color: var(--dtp-primary);
   cursor: pointer;
   border-radius: 8px;
   font-size: 14px;
@@ -387,8 +373,8 @@ $success-color: #4caf50;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: $primary-light;
-    color: $primary-color;
+    background-color: var(--dtp-primary-light);
+    color: var(--dtp-primary);
   }
 }
 
@@ -401,7 +387,7 @@ $success-color: #4caf50;
 }
 
 .ok-button {
-  background: $primary-color;
+  background: var(--dtp-primary);
   border: none;
   color: white;
   cursor: pointer;
@@ -412,14 +398,14 @@ $success-color: #4caf50;
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: $primary-hover;
+    background-color: var(--dtp-primary-hover);
   }
 }
 
 .cancel-button {
   background: none;
-  border: 1px solid $border-color;
-  color: $text-color;
+  border: 1px solid var(--dtp-border);
+  color: var(--dtp-text);
   cursor: pointer;
   border-radius: 8px;
   font-size: 14px;
@@ -428,15 +414,15 @@ $success-color: #4caf50;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: $primary-light;
-    color: $primary-color;
+    background-color: var(--dtp-primary-light);
+    color: var(--dtp-primary);
   }
 }
 
 .clear-button {
   background: none;
-  border: 1px solid $border-color;
-  color: $text-color-light;
+  border: 1px solid var(--dtp-border);
+  color: var(--dtp-text-secondary);
   cursor: pointer;
   border-radius: 8px;
   font-size: 14px;
@@ -445,8 +431,8 @@ $success-color: #4caf50;
   transition: background-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: #fff3e0;
-    color: #e65100;
+    background-color: var(--dtp-danger-bg);
+    color: var(--dtp-danger);
   }
 }
 
@@ -455,7 +441,7 @@ $success-color: #4caf50;
 // Footer Description
 .footer-description {
   font-size: 14px;
-  color: $text-color-light;
+  color: var(--dtp-text-secondary);
   text-align: center;
   padding: 0 16px;
 }
@@ -519,7 +505,7 @@ button:disabled {
   .time-picker-section {
     width: 100%;
     border-left: none;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid var(--dtp-border);
     padding: 12px;
 
     .time-picker-header {

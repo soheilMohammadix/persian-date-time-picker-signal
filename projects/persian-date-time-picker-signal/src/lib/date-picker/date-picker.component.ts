@@ -23,8 +23,6 @@ import {
   viewChildren,
   booleanAttribute
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { BreakpointObserver } from "@angular/cdk/layout";
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -54,7 +52,7 @@ import {
 } from "../utils/overlay/overlay";
 import { DOCUMENT, NgTemplateOutlet } from "@angular/common";
 import { DestroyService, PersianDateTimePickerService, } from "../persian-date-time-picker.service";
-import { fromEvent, map, Subscription, takeUntil } from "rxjs";
+import { fromEvent, Subscription, takeUntil } from "rxjs";
 import { CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat, } from "../utils/types";
 import { CustomTemplate } from "../utils/template.directive";
 import { DateMaskDirective } from "../utils/input-mask.directive";
@@ -69,6 +67,7 @@ import { MobileDatePickerComponent } from "../mobile-date-picker/mobile-date-pic
   host: {
     "[class.persian-date-picker]": "true",
     "[class.persian-date-picker-rtl]": "rtl()",
+    "[class.dtp-dark]": "persianDateTimePickerService.isDark()",
   },
   imports: [
     FormsModule,
@@ -163,15 +162,6 @@ export class DatePickerComponent
   documentClickListener?: (event: MouseEvent) => void;
 
   private formSubscriptions: Subscription[] = [];
-
-
-  private breakpointObserver = inject(BreakpointObserver);
-  isMobile = toSignal(
-    this.breakpointObserver
-      .observe("(max-width: 768.98px)")
-      .pipe(map((result) => result.matches)),
-    { initialValue: false },
-  );
 
   parsedMinDate = computed(() => {
     const min = this.minDate();

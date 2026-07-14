@@ -1,3 +1,5 @@
+@use '../colors';
+
 :host.persian-date-picker ::ng-deep {
   display: block;
   max-width: fit-content;
@@ -13,10 +15,12 @@ input {
   max-width: 300px;
   min-width: 150px;
   padding: 6px 10px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--dtp-input-border);
   border-radius: 4px;
   font-size: 14px;
   outline: none;
+  background: var(--dtp-input-bg);
+  color: var(--dtp-text);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
@@ -25,19 +29,19 @@ input {
 }
 
 input:hover {
-  border-color: #40a9ff;
+  border-color: var(--dtp-primary-hover);
 }
 
 input.focus {
-  border-color: #40a9ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  border-color: var(--dtp-primary-hover);
+  box-shadow: 0 0 0 2px var(--dtp-focus-shadow);
   outline: none;
 }
 
 .range-input-container {
   display: flex;
   align-items: center;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--dtp-input-border);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -52,13 +56,13 @@ input.focus {
 
 .range-input-container input.focus {
   border-bottom: 1px solid;
-  border-color: #40a9ff;
+  border-color: var(--dtp-primary-hover);
   box-shadow: none !important;
 }
 
 .range-separator {
   padding: 0 8px;
-  color: #999;
+  color: var(--dtp-separator);
 }
 
 .calendar-button {
@@ -73,7 +77,7 @@ input.focus {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: #444;
+  color: var(--dtp-text);
   padding: 0px 5px 5px;
 }
 
@@ -87,7 +91,7 @@ input.focus {
 }
 
 .disabled .range-input-container {
-  background: #f3f3f3;
+  background: var(--dtp-disabled);
 }
 
 .input-container .calendar-button {
@@ -105,7 +109,7 @@ input.focus {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  color: #444
+  color: var(--dtp-text);
 }
 
 .input-container.rtl {
@@ -116,27 +120,7 @@ input.focus {
   rotate: 180deg;
 }
 
-// Mobile backdrop styles
-// NOTE: backdrop-filter intentionally omitted — on iOS Safari, backdrop-filter on a
-// full-screen position:fixed element renders transformed/fixed siblings (the dialog uses
-// translate(-50%, -50%)) at the wrong scale/position ("zoomed in" compositing bug).
-// The semi-opaque background-color below provides the dimming effect on its own.
-// NOTE: use `inset: 0` (not `width: 100vw` / `height: 100vh`) — `vw`/`vh` resolve against the
-// iOS Safari *large* viewport (wider/taller than the visible area), causing horizontal overflow
-// that Safari compensates for by shifting/zooming the layout → the dialog renders "zoomed in".
-// `inset: 0` stretches a fixed element to the visible viewport with no overflow.
-.mobile-backdrop {
-  position: fixed;
-  top: 0;        // fallback for browsers without `inset` support
-  left: 0;       // fallback
-  right: 0;       // fallback
-  bottom: 0;      // fallback
-  inset: 0;       // modern: stretches to the visible viewport (no vw/vh overflow on iOS Safari)
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 9998;
-}
-
-// Desktop backdrop styles
+// Desktop backdrop styles (used by CDK overlay on all screen sizes)
 .desktop-backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--dtp-backdrop);
 }

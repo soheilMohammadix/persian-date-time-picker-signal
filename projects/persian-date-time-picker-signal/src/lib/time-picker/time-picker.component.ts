@@ -61,7 +61,8 @@ import { DateMaskDirective } from '../utils/input-mask.directive';
     }
   ],
   host: {
-    '(click)': 'open()'
+    '(click)': 'open()',
+    '[class.dtp-dark]': 'persianDateTimePickerService.isDark()'
   },
   animations: [slideMotion]
 })

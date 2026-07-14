@@ -1,3 +1,5 @@
+@use '../colors';
+
 :host {
   // Mobile dialog style variables - Light theme
   --mobile-primary-color: #2563eb;
@@ -27,6 +29,25 @@
     padding: 0;
     margin: 0;
   }
+}
+
+// Dark mode overrides for mobile — remap --mobile-* to --dtp-* vars
+:host.dtp-dark {
+  --mobile-primary-color: var(--dtp-primary);
+  --mobile-primary-hover: var(--dtp-primary-hover);
+  --mobile-primary-light: var(--dtp-primary-light);
+  --mobile-secondary-color: var(--dtp-text-secondary);
+  --mobile-background-color: var(--dtp-surface);
+  --mobile-border-color: var(--dtp-border);
+  --mobile-text-color: var(--dtp-text);
+  --mobile-text-color-light: var(--dtp-text-secondary);
+  --mobile-shadow-color: var(--dtp-shadow);
+  --mobile-today-border: var(--dtp-today-ring);
+  --mobile-today-dot: var(--dtp-today-ring);
+  --mobile-disabled-color: var(--dtp-disabled);
+  --mobile-success-color: var(--dtp-success);
+  --mobile-surface-color: var(--dtp-surface-alt);
+  --mobile-divider-color: var(--dtp-mobile-divider);
 }
 
 .mobile-date-picker {
@@ -576,13 +597,13 @@
       color: var(--mobile-text-color-light);
 
       &:hover {
-        background-color: #fff3e0;
-        border-color: #e65100;
-        color: #e65100;
+        background-color: var(--dtp-danger-bg);
+        border-color: var(--dtp-danger);
+        color: var(--dtp-danger);
       }
 
       &:active {
-        background-color: #fff3e0;
+        background-color: var(--dtp-danger-bg);
       }
     }
   }

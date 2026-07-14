@@ -15,6 +15,9 @@ import { YearRange } from "../utils/models";
   imports: [TimePickerComponent, ConvertNumbersPipe],
   templateUrl: "./mobile-date-picker.component.html",
   styleUrls: ["./mobile-date-picker.component.scss"],
+  host: {
+    '[class.dtp-dark]': 'persianDateTimePickerService.isDark()'
+  }
 })
 export class MobileDatePickerComponent extends PersianDatePickerBase {
   activeTab = signal<"date" | "time">("date");

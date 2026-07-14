@@ -1,13 +1,4 @@
-// Variables
-$primary-color: #1890ff;
-$primary-hover: #40a9ff;
-$border-color: #d9d9d9;
-$text-color: #666;
-$disabled-color: #d9d9d9;
-$separator-color: #999;
-$border-light: #f0f0f0;
-$box-shadow-color: rgba(0, 0, 0, 0.08);
-$focus-shadow-color: rgba(24, 144, 255, 0.2);
+@use '../colors';
 
 // Mixins
 @mixin button-reset {
@@ -19,8 +10,8 @@ $focus-shadow-color: rgba(24, 144, 255, 0.2);
 @mixin default-button {
   padding: 4px 15px;
   border-radius: 4px;
-  border: 1px solid $border-color;
-  background: white;
+  border: 1px solid var(--dtp-border);
+  background: var(--dtp-surface);
   cursor: pointer;
   font-size: 14px;
   font-family: inherit;
@@ -49,17 +40,17 @@ $focus-shadow-color: rgba(24, 144, 255, 0.2);
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: 1px solid $border-color;
+  border: 1px solid var(--dtp-border);
   border-radius: 4px;
 
   &.focus {
-    border-color: $primary-hover;
-    box-shadow: 0 0 0 2px $focus-shadow-color;
+    border-color: var(--dtp-primary-hover);
+    box-shadow: 0 0 0 2px var(--dtp-focus-shadow);
     outline: none;
   }
 
   &.disabled {
-    background: #fafafa;
+    background: var(--dtp-column-disabled-bg);
   }
 }
 
@@ -69,7 +60,7 @@ input {
   }
 
   &:hover {
-    border-color: $primary-hover;
+    border-color: var(--dtp-primary-hover);
   }
 
   &.time-picker-input {
@@ -89,9 +80,9 @@ input {
 }
 
 .time-picker-popup {
-  background: white;
+  background: var(--dtp-surface);
   border-radius: 8px;
-  box-shadow: 0 6px 16px 0 $box-shadow-color;
+  box-shadow: 0 6px 16px 0 var(--dtp-shadow);
   width: fit-content;
   min-width: 200px;
   overflow: hidden;
@@ -103,7 +94,7 @@ input {
   &.inline {
     box-shadow: none;
     margin: 0;
-    border: 1px solid $border-color;
+    border: 1px solid var(--dtp-border);
 
     .time-picker-content {
       padding: 4px;
@@ -115,12 +106,12 @@ input {
         width: 6px;
 
         &-thumb {
-          background: $border-color;
+          background: var(--dtp-border);
           border-radius: 3px;
         }
 
         &-track {
-          background: #f5f5f5;
+          background: var(--dtp-column-bg-hover);
         }
       }
     }
@@ -131,7 +122,7 @@ input {
   padding: 16px;
   font-size: 16px;
   font-weight: 500;
-  border-bottom: 1px solid $border-light;
+  border-bottom: 1px solid var(--dtp-border-light);
 }
 
 .time-picker-content {
@@ -162,21 +153,21 @@ input {
     width: 100%;
     padding: 6px 8px;
     @include button-reset;
-    color: $text-color;
+    color: var(--dtp-text-secondary);
     font-size: 14px;
     border-radius: 4px;
 
     &:hover:not(.disabled) {
-      background: #f5f5f5;
+      background: var(--dtp-column-bg-hover);
     }
 
     &.selected {
-      background: #e6f4ff;
-      color: $primary-color;
+      background: var(--dtp-selection-bg);
+      color: var(--dtp-primary);
     }
 
     &.disabled {
-      color: $disabled-color;
+      color: var(--dtp-disabled-text);
       cursor: not-allowed;
     }
   }
@@ -190,7 +181,7 @@ input {
 
 .time-separator {
   padding: 8px 0;
-  color: $separator-color;
+  color: var(--dtp-separator);
   font-weight: bold;
 }
 
@@ -198,7 +189,7 @@ input {
   display: flex;
   justify-content: space-between;
   padding: 8px;
-  border-top: 1px solid $border-light;
+  border-top: 1px solid var(--dtp-border-light);
 }
 
 button {
@@ -206,20 +197,20 @@ button {
 }
 
 .save-btn {
-  background: $primary-color;
-  border-color: $primary-color;
+  background: var(--dtp-primary);
+  border-color: var(--dtp-primary);
   color: white;
 
   &:hover {
-    background: $primary-hover;
-    border-color: $primary-hover;
+    background: var(--dtp-primary-hover);
+    border-color: var(--dtp-primary-hover);
   }
 }
 
 .cancel-btn {
   &:hover {
-    border-color: $primary-hover;
-    color: $primary-hover;
+    border-color: var(--dtp-primary-hover);
+    color: var(--dtp-primary-hover);
   }
 }
 
@@ -230,14 +221,14 @@ button {
 }
 
 .now-btn {
-  color: $primary-color;
+  color: var(--dtp-primary);
   border-color: transparent;
   background: transparent;
   box-shadow: none;
   padding-left: 0;
 
   &:hover {
-    color: $primary-hover;
+    color: var(--dtp-primary-hover);
   }
 }
 
@@ -259,10 +250,10 @@ button {
 
 @media screen and (max-width: 768px) {
   .time-picker-popup {
-    background: white;
+    background: var(--dtp-surface);
     border-radius: 8px;
     border: unset;
-    //box-shadow: 0 6px 16px 0 $box-shadow-color;
+    //box-shadow: 0 6px 16px 0 var(--dtp-shadow);
     width: 90%; // not 90vw — `vw` overflows the visible width on iOS Safari (same zoom bug)
     min-width: 200px;
     overflow: hidden;

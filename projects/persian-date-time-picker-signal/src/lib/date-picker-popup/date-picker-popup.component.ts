@@ -20,6 +20,9 @@ import { takeUntil } from "rxjs";
   imports: [NgTemplateOutlet, TimePickerComponent, ConvertNumbersPipe],
   templateUrl: "./date-picker-popup.component.html",
   styleUrls: ["./date-picker-popup.component.scss"],
+  host: {
+    '[class.dtp-dark]': 'persianDateTimePickerService.isDark()'
+  }
 })
 export class DatePickerPopupComponent
   extends PersianDatePickerBase
