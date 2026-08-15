@@ -229,6 +229,10 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
         this._selectedDate = d;
         // updateFromValue calls updateFromDate using value but _selectedDate is used as base
         this.updateFromValue(this._value);
+      } else {
+        // Parent cleared its selection — drop the stale date so save()
+        // cannot reconstruct and re-emit it.
+        this._selectedDate = null;
       }
     });
 
@@ -370,6 +374,19 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       second: 0,
       period: lang.am
     });
+    this.changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Clears all internal state without emitting any value.
+   * Called by the parent date picker when the user clears the selection,
+   * so stale `_value` / `_selectedDate` cannot re-emit a date afterwards.
+   */
+  clear(): void {
+    this._value = null;
+    this._selectedDate = null;
+    this.form?.get('timeInput')?.setValue('', { emitEvent: false });
+    this.resetSelection();
     this.changeDetectorRef.markForCheck();
   }
 
@@ -684,6 +701,13 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     let date = this._value instanceof Date ?
       adapter.clone(this._value) :
       (this.selectedDateInput() || this._selectedDate);
+
+    // After a clear all bases can be null; fall back to "now" so the time
+    // setters below don't crash. This does NOT resurrect the cleared date
+    // selection — the parent's updateSingleDateTime() guards that.
+    if (!date) {
+      date = new Date();
+    }
 
     // Only update time components of the date
     date = adapter.setHours(date!, hours);

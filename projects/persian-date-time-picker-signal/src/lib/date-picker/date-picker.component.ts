@@ -1077,6 +1077,10 @@ export class DatePickerComponent
     switch (this.valueFormat()) {
       case "date":
         return date;
+      case "iso":
+        // ISO 8601 with timezone — the only string format that backends
+        // cannot misinterpret as a different day.
+        return date.toISOString();
       case "jalali":
         return this.jalaliDateAdapter.format(date, this.format());
       case "gregorian":
@@ -1152,8 +1156,20 @@ export class DatePickerComponent
     this.form!.get("startDateInput")?.setValue("", { emitEvent: false });
     this.form!.get("endDateInput")?.setValue("", { emitEvent: false });
     this.lastEmittedValue = null;
+    this.resetTimePicker();
     this.isInternalChange = false;
     this.changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Reset the embedded time picker's stale state so that it cannot re-emit
+   * a date after the parent has been cleared. Without this, `_value` and
+   * `_selectedDate` survive a clear and trigger re-emission on the next
+   * time change.
+   */
+  private resetTimePicker(): void {
+    const tp = this.datePickerPopup()?.timePicker();
+    tp?.clear();
   }
 
   registerOnChange(fn: any): void {

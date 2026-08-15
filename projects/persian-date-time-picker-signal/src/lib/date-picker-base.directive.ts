@@ -337,7 +337,14 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
                 date = this.applyTimeToDate(date, existingDate);
             }
         } else {
-            date = this.applyTimeToDate(date, new Date());
+            // Without a time picker the picked day must resolve to local
+            // midnight — stamping the *current* wall-clock time onto it made
+            // the emitted date drift into a different day once serialized
+            // (e.g. via toISOString) for the backend.
+            date = this.applyTimeToDate(
+                date,
+                this.dateAdapter!.startOfDay(date),
+            );
         }
 
         if (this.isRange()) {
@@ -786,10 +793,10 @@ export abstract class PersianDatePickerBase implements OnInit, OnDestroy {
     }
 
     updateSingleDateTime(timeDate: Date): void {
-        let selected = this.selectedDate();
-        if (!selected) {
-            selected = this.dateAdapter!.today();
-        }
+        const selected = this.selectedDate();
+        // No selection (e.g. after a clear) — a time change alone must not
+        // resurrect a date that the user just cleared.
+        if (!selected) return;
 
         const updatedDate = this.applyTimeToDate(selected, timeDate);
         this.dateSelected.emit(updatedDate);
