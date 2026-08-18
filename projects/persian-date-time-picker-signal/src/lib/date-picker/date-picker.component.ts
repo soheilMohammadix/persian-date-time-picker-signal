@@ -836,7 +836,10 @@ export class DatePickerComponent
     if (typeof inputValue === "string" && !this.isOpen()) {
       let correctedValue = inputValue;
 
-      if (!inputValue && this.allowEmpty()) {
+      if (!inputValue) {
+        // Empty input (e.g. right after a clear): keep the model null.
+        // This must not depend on allowEmpty — the user explicitly cleared
+        // the value, so re-defaulting to "today" would resurrect it.
         correctedValue = "";
         if (this.isRange()) {
           if (inputType === "start") this.selectedStartDate.set(null);
@@ -886,13 +889,10 @@ export class DatePickerComponent
     if (!this.dateAdapter) return value;
 
     if (!value || !value.trim()) {
-      if (this.allowEmpty()) {
-        return '';
-      }
-      const today = this.dateAdapter.today();
-      const date = this.clampDate(today);
-      const formattedValue = this.dateAdapter.format(date!, this.format());
-      return this.convertNumbersForDisplay(formattedValue);
+      // An empty input must stay empty — even when allowEmpty is false.
+      // Defaulting it to "today" here resurrected a date right after the
+      // user cleared the selection (clear → click outside → today shown).
+      return '';
     }
 
     let processedValue = value;

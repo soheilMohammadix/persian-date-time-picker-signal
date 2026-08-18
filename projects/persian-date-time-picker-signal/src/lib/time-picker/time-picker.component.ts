@@ -401,6 +401,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
 
     if (value instanceof Date) {
       this._value = value;
+      // Sync selectedTime with the incoming date's actual time BEFORE any
+      // save(). Without this, a freshly-mounted picker still holds the
+      // default {hour:12} selection and emits "date + 12:00" the moment the
+      // popup (re)opens — silently overwriting the user's chosen time.
+      this.updateFromDate(value);
     } else if (typeof value === 'string' && value.trim()) {
       const date = this._selectedDate;
       this._value = !isNaN(date!.getTime()) && this.valueType() === 'date' ? date : value;
