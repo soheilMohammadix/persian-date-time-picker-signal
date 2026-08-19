@@ -1,4 +1,4 @@
-import {Inject, Injectable, OnDestroy, signal, computed, DestroyRef} from "@angular/core";
+import {Inject, Injectable, OnDestroy, Optional, signal, computed, DestroyRef} from "@angular/core";
 import {BehaviorSubject, Subject, takeUntil} from "rxjs";
 import {EnglishLocale, LanguageLocale, PersianLocale} from "./utils/models";
 import {PERSIAN_DATE_TIME_PICKER_CONFIG, PersianDateTimePickerConfig} from "./persian-date-time-picker.config";
@@ -8,7 +8,7 @@ export interface ValidTimeResult {
   normalizedTime: string;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable()
 export class PersianDateTimePickerService {
   // Legacy BehaviorSubject for backward compatibility during migration
   activeInput: BehaviorSubject<string> = new BehaviorSubject('');
@@ -38,24 +38,28 @@ export class PersianDateTimePickerService {
   });
 
   private readonly _darkModeClass: string;
+  private readonly _detectPrefersColorScheme: boolean;
 
   constructor(
     public persianLocale: PersianLocale,
     public englishLocale: EnglishLocale,
     private destroyRef: DestroyRef,
-    @Inject(PERSIAN_DATE_TIME_PICKER_CONFIG) config: PersianDateTimePickerConfig
+    @Optional() @Inject(PERSIAN_DATE_TIME_PICKER_CONFIG) config: PersianDateTimePickerConfig | null
   ) {
-    this._darkModeClass = config.darkModeClass ?? 'dark';
+    this._darkModeClass = config?.darkModeClass ?? 'dark';
+    this._detectPrefersColorScheme = config?.detectPrefersColorScheme ?? true;
     this._setupDarkModeDetection();
   }
 
   private _setupDarkModeDetection(): void {
-    // 1) prefers-color-scheme media query
-    const darkMq = window.matchMedia('(prefers-color-scheme: dark)');
-    this._prefersDark.set(darkMq.matches);
-    darkMq.addEventListener('change', (e: MediaQueryListEvent) => {
-      this._prefersDark.set(e.matches);
-    });
+    // 1) prefers-color-scheme media query (optional)
+    if (this._detectPrefersColorScheme) {
+      const darkMq = window.matchMedia('(prefers-color-scheme: dark)');
+      this._prefersDark.set(darkMq.matches);
+      darkMq.addEventListener('change', (e: MediaQueryListEvent) => {
+        this._prefersDark.set(e.matches);
+      });
+    }
 
     // 2) MutationObserver for configured dark mode class on <html>
     const observer = new MutationObserver(() => {
