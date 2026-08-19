@@ -26,3 +26,7 @@ export * from './lib/date-adapter';
 
 // Types
 export * from './lib/utils/types';
+
+// Configuration
+export * from './lib/persian-date-time-picker.config';
+export * from './lib/providers';

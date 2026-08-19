@@ -1,6 +1,7 @@
-import {Injectable, OnDestroy, signal, computed, DestroyRef} from "@angular/core";
+import {Inject, Injectable, OnDestroy, signal, computed, DestroyRef} from "@angular/core";
 import {BehaviorSubject, Subject, takeUntil} from "rxjs";
 import {EnglishLocale, LanguageLocale, PersianLocale} from "./utils/models";
+import {PERSIAN_DATE_TIME_PICKER_CONFIG, PersianDateTimePickerConfig} from "./persian-date-time-picker.config";
 
 export interface ValidTimeResult {
   isValid: boolean;
@@ -25,7 +26,7 @@ export class PersianDateTimePickerService {
   /** True when the OS prefers dark scheme (backed by matchMedia) */
   private readonly _prefersDark = signal(false);
 
-  /** True when <html> has class 'dark' (backed by MutationObserver) */
+  /** True when <html> has the configured dark mode class (backed by MutationObserver) */
   private readonly _htmlHasDark = signal(false);
 
   /** Computed — single source of truth */
@@ -36,11 +37,15 @@ export class PersianDateTimePickerService {
     return this._prefersDark() || this._htmlHasDark();
   });
 
+  private readonly _darkModeClass: string;
+
   constructor(
     public persianLocale: PersianLocale,
     public englishLocale: EnglishLocale,
-    private destroyRef: DestroyRef
+    private destroyRef: DestroyRef,
+    @Inject(PERSIAN_DATE_TIME_PICKER_CONFIG) config: PersianDateTimePickerConfig
   ) {
+    this._darkModeClass = config.darkModeClass ?? 'dark';
     this._setupDarkModeDetection();
   }
 
@@ -52,9 +57,9 @@ export class PersianDateTimePickerService {
       this._prefersDark.set(e.matches);
     });
 
-    // 2) MutationObserver for .dark class on <html>
+    // 2) MutationObserver for configured dark mode class on <html>
     const observer = new MutationObserver(() => {
-      this._htmlHasDark.set(document.documentElement.classList.contains('dark'));
+      this._htmlHasDark.set(document.documentElement.classList.contains(this._darkModeClass));
     });
     observer.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
 
