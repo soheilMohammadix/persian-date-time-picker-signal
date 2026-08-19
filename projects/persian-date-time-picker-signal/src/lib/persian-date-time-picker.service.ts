@@ -8,7 +8,7 @@ export interface ValidTimeResult {
   normalizedTime: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class PersianDateTimePickerService {
   // Legacy BehaviorSubject for backward compatibility during migration
   activeInput: BehaviorSubject<string> = new BehaviorSubject('');
@@ -108,7 +108,7 @@ export class PersianDateTimePickerService {
   }
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DestroyService extends Subject<void> implements OnDestroy {
   constructor(private destroyRef: DestroyRef) {
     super();
