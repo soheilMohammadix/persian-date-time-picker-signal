@@ -12,8 +12,8 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "paths": {
-      "persian-date-time-picker": [
-        "./dist/persian-date-time-picker"
+      "persian-date-time-picker-signal": [
+        "./dist/persian-date-time-picker-signal"
       ]
     },
     "importHelpers": true,
@@ -36,10 +36,10 @@
       "path": "./tsconfig.spec.json"
     },
     {
-      "path": "./projects/persian-date-time-picker/tsconfig.lib.json"
+      "path": "./projects/persian-date-time-picker-signal/tsconfig.lib.json"
     },
     {
-      "path": "./projects/persian-date-time-picker/tsconfig.spec.json"
+      "path": "./projects/persian-date-time-picker-signal/tsconfig.spec.json"
     }
   ]
 }
