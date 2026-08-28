@@ -99,7 +99,7 @@ input {
   height: 40vh;
   //max-height: 280px;
 
-  &.inline {
+  &.dtp-inline {
     box-shadow: none;
     margin: 0;
     border: 1px solid $border-color;
@@ -247,7 +247,7 @@ button {
     }
   }
 
-  &.time-picker-popup.inline {
+  &.time-picker-popup.dtp-inline {
     border: none;
     border-radius: 0;
     height: 286px;

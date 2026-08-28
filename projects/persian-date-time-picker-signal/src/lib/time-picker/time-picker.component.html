@@ -7,7 +7,7 @@
         [dtp-dateMask]="displayFormat()" [placeholder]="effectivePlaceholder()"
         [readonly]="readOnly() || readOnlyInput()" class="time-picker-input" formControlName="timeInput" type="text">
       @if (showIcon()) {
-        <button (click)="toggleTimePicker($event)" class="time-button" tabindex="-1">
+        <button type="button" (click)="toggleTimePicker($event)" class="time-button" tabindex="-1">
           <svg fill="none" height="20" stroke="#999" stroke-width="2" viewBox="0 0 24 24" width="20"
             xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="10" />
@@ -32,7 +32,7 @@
   <!-- Time Picker Content Template -->
   <ng-template #timePickerContent>
     <div #popupWrapper (click)="$event.stopPropagation()" [@slideMotion]="'enter'" [class.disabled]="disabled()"
-      [class.inline]="inline()" [class]="'time-picker-popup ' + cssClass()" style="position: relative">
+      [class.dtp-inline]="inline()" [class]="'time-picker-popup ' + cssClass()" style="position: relative">
       <div class="time-picker-content">
         <div class="time-header">
           @if (showSeconds()) {

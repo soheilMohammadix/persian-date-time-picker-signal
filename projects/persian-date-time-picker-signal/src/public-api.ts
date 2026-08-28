@@ -26,3 +26,6 @@ export * from './lib/date-adapter';
 
 // Types
 export * from './lib/utils/types';
+
+// Root providers
+export * from './lib/providers';
