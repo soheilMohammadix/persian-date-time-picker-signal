@@ -1,3 +1,5 @@
+@use '../colors';
+
 :host {
   // Mobile dialog style variables - Light theme
   --mobile-primary-color: #2563eb;
@@ -29,14 +31,39 @@
   }
 }
 
+// Dark mode overrides for mobile — remap --mobile-* to --dtp-* vars
+:host.dtp-dark {
+  --mobile-primary-color: var(--dtp-primary);
+  --mobile-primary-hover: var(--dtp-primary-hover);
+  --mobile-primary-light: var(--dtp-primary-light);
+  --mobile-secondary-color: var(--dtp-text-secondary);
+  --mobile-background-color: var(--dtp-surface);
+  --mobile-border-color: var(--dtp-border);
+  --mobile-text-color: var(--dtp-text);
+  --mobile-text-color-light: var(--dtp-text-secondary);
+  --mobile-shadow-color: var(--dtp-shadow);
+  --mobile-today-border: var(--dtp-today-ring);
+  --mobile-today-dot: var(--dtp-today-ring);
+  --mobile-disabled-color: var(--dtp-disabled);
+  --mobile-success-color: var(--dtp-success);
+  --mobile-surface-color: var(--dtp-surface-alt);
+  --mobile-divider-color: var(--dtp-mobile-divider);
+}
+
 .mobile-date-picker {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  max-height: 85vh;
-  max-width: 90vw;
-  min-width: 90vw;
-  min-height: 400px;
+  height: 80vh; // fallback for older browsers
+  height: 80dvh; // iOS Safari: dynamic viewport height — keeps the dialog within the visible area
+  max-height: 85vh; // fallback for older browsers
+  max-height: 85dvh; // iOS Safari: dynamic viewport height
+  max-width: 90%;   // not 90vw — `vw` overflows the visible width on iOS Safari (causes the
+                    // centered dialog to render "zoomed in"); `%` on a fixed element = visible width
+  min-width: 90%;   // same as above
+  min-height: 400px; // fallback for older browsers
+  min-height: min(400px, 80dvh); // cap on small viewports so the dialog never exceeds the
+                                 // visible area (prevents the translate(-50%,-50%) from cropping
+                                 // top/bottom, which read as "zoomed in")
   background: var(--mobile-background-color);
   position: fixed;
   top: 50%;
@@ -515,7 +542,8 @@
     gap: 8px;
 
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       flex: 1;
       border-radius: 6px;
       font-size: 14px;
@@ -560,6 +588,22 @@
 
       &:active {
         background-color: var(--mobile-surface-color);
+      }
+    }
+
+    .clear-button {
+      background: var(--mobile-background-color);
+      border-color: var(--mobile-border-color);
+      color: var(--mobile-text-color-light);
+
+      &:hover {
+        background-color: var(--dtp-danger-bg);
+        border-color: var(--dtp-danger);
+        color: var(--dtp-danger);
+      }
+
+      &:active {
+        background-color: var(--dtp-danger-bg);
       }
     }
   }
@@ -660,7 +704,8 @@ button:focus-visible {
 
     .today-button,
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       padding: 10px;
       font-size: 13px;
       min-height: 40px;
@@ -707,7 +752,8 @@ button:focus-visible {
 
     .today-button,
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       padding: 8px;
       font-size: 12px;
       min-height: 36px;
@@ -768,7 +814,8 @@ button:focus-visible {
 
     .today-button,
     .ok-button,
-    .cancel-button {
+    .cancel-button,
+    .clear-button {
       padding: 12px;
       font-size: 14px;
     }

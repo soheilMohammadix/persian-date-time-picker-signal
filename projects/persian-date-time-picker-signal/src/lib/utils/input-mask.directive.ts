@@ -13,6 +13,13 @@ export class DateMaskDirective {
   parts: string[] = [];
   lastValue: string = '';
 
+  persianDigitMap: { [key: string]: string } = {
+    '\u06F0': '0', '\u06F1': '1', '\u06F2': '2', '\u06F3': '3', '\u06F4': '4',
+    '\u06F5': '5', '\u06F6': '6', '\u06F7': '7', '\u06F8': '8', '\u06F9': '9',
+    '\u0660': '0', '\u0661': '1', '\u0662': '2', '\u0663': '3', '\u0664': '4',
+    '\u0665': '5', '\u0666': '6', '\u0667': '7', '\u0668': '8', '\u0669': '9',
+  };
+
   constructor(public elementRef: ElementRef) {
   }
 
@@ -58,7 +65,9 @@ export class DateMaskDirective {
 
     const input = event.target as HTMLInputElement;
     const cursorPosition = input.selectionStart || 0;
-    let value = input.value.replace(/[^0-9APMapm\s:/\-\.]/g, '');
+    let value = input.value.replace(/[^\u06F0-\u06F9\u0660-\u06690-9APMapm\s:/\-\.]/g, '');
+
+    value = this.convertPersianDigitsToLatin(value);
 
     // Allow backspace/delete
     if (value.length < this.lastValue.length) {
@@ -179,8 +188,8 @@ export class DateMaskDirective {
       return;
     }
 
-    // Allow only digits for other parts
-    if (!/^\d$/.test(event.key)) {
+    // Allow only digits (Latin or Persian/Arabic) for other parts
+    if (!/^\d$/.test(event.key) && !/^[\u06F0-\u06F9\u0660-\u0669]$/.test(event.key)) {
       event.preventDefault();
     }
   }
@@ -252,5 +261,11 @@ export class DateMaskDirective {
     }
 
     return parts.length - 1;
+  }
+
+  convertPersianDigitsToLatin(value: string): string {
+    return value.replace(/[\u06F0-\u06F9\u0660-\u0669]/g, (match) => {
+      return this.persianDigitMap[match] || match;
+    });
   }
 }

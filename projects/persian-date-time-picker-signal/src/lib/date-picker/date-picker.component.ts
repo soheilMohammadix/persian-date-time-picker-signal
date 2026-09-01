@@ -23,8 +23,6 @@ import {
   viewChildren,
   booleanAttribute
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { BreakpointObserver } from "@angular/cdk/layout";
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -54,7 +52,7 @@ import {
 } from "../utils/overlay/overlay";
 import { DOCUMENT, NgTemplateOutlet } from "@angular/common";
 import { DestroyService, PersianDateTimePickerService, } from "../persian-date-time-picker.service";
-import { fromEvent, map, Subscription, takeUntil } from "rxjs";
+import { fromEvent, Subscription, takeUntil } from "rxjs";
 import { CalendarType, DatePickerMode, Placement, RangePartType, ValueFormat, } from "../utils/types";
 import { CustomTemplate } from "../utils/template.directive";
 import { DateMaskDirective } from "../utils/input-mask.directive";
@@ -69,6 +67,7 @@ import { MobileDatePickerComponent } from "../mobile-date-picker/mobile-date-pic
   host: {
     "[class.persian-date-picker]": "true",
     "[class.persian-date-picker-rtl]": "rtl()",
+    "[class.dtp-dark]": "persianDateTimePickerService.isDark()",
   },
   imports: [
     FormsModule,
@@ -163,15 +162,6 @@ export class DatePickerComponent
   documentClickListener?: (event: MouseEvent) => void;
 
   private formSubscriptions: Subscription[] = [];
-
-
-  private breakpointObserver = inject(BreakpointObserver);
-  isMobile = toSignal(
-    this.breakpointObserver
-      .observe("(max-width: 768.98px)")
-      .pipe(map((result) => result.matches)),
-    { initialValue: false },
-  );
 
   parsedMinDate = computed(() => {
     const min = this.minDate();
@@ -460,6 +450,13 @@ export class DatePickerComponent
     this.focus();
   }
 
+  onClear(): void {
+    this.resetValues();
+    this.onChange(null);
+    this.onChangeValue.emit(null);
+    this.close();
+  }
+
   handleRangeDateSelection(date: Date): void {
     const start = this.selectedStartDate();
     const end = this.selectedEndDate();
@@ -584,16 +581,18 @@ export class DatePickerComponent
 
   getPlaceholder(inputType: string | null = null): string {
     const lang = this.effectiveLang();
-    if (inputType === "start") return lang.startDate;
-    if (inputType === "end") return lang.endDate;
+    const formatHint = this.format();
+
+    if (inputType === "start") return `${lang.startDate} (${formatHint})`;
+    if (inputType === "end") return `${lang.endDate} (${formatHint})`;
 
     switch (this.mode()) {
       case "month":
-        return lang.selectMonth;
+        return `${lang.selectMonth} (${formatHint})`;
       case "year":
-        return lang.selectYear;
+        return `${lang.selectYear} (${formatHint})`;
       default:
-        return lang.selectDate;
+        return `${lang.selectDate} (${formatHint})`;
     }
   }
 
@@ -837,13 +836,22 @@ export class DatePickerComponent
     if (typeof inputValue === "string" && !this.isOpen()) {
       let correctedValue = inputValue;
 
-      if (!inputValue && this.allowEmpty()) {
+      if (!inputValue) {
+        // Empty input (e.g. right after a clear): keep the model null.
+        // This must not depend on allowEmpty — the user explicitly cleared
+        // the value, so re-defaulting to "today" would resurrect it.
         correctedValue = "";
+        if (this.isRange()) {
+          if (inputType === "start") this.selectedStartDate.set(null);
+          if (inputType === "end") this.selectedEndDate.set(null);
+        } else {
+          this.selectedDate.set(null);
+        }
+        this.onChange(null);
       } else {
         correctedValue = this.validateAndCorrectInput(inputValue);
       }
 
-      // Apply the corrected value directly to the appropriate input field
       if (this.isRange()) {
         if (inputType === "start") {
           this.form!.get("startDateInput")?.setValue(correctedValue, { emitEvent: false });
@@ -854,20 +862,10 @@ export class DatePickerComponent
         this.form!.get("dateInput")?.setValue(correctedValue, { emitEvent: false });
       }
 
-      if (correctedValue !== inputValue) {
+      if (correctedValue !== inputValue && !(inputValue || !this.allowEmpty())) {
         if (inputValue || !this.allowEmpty()) {
           this.handleCorrectedValue(inputType, correctedValue);
         }
-      }
-
-      if (!inputValue && this.allowEmpty()) {
-        if (this.isRange()) {
-          if (inputType === "start") this.selectedStartDate.set(null);
-          if (inputType === "end") this.selectedEndDate.set(null);
-        } else {
-          this.selectedDate.set(null);
-        }
-        this.onChange(null);
       }
 
       this.onBlur.emit({
@@ -890,7 +888,13 @@ export class DatePickerComponent
   validateAndCorrectInput(value: string): string {
     if (!this.dateAdapter) return value;
 
-    // First convert Persian numbers to Latin for parsing
+    if (!value || !value.trim()) {
+      // An empty input must stay empty — even when allowEmpty is false.
+      // Defaulting it to "today" here resurrected a date right after the
+      // user cleared the selection (clear → click outside → today shown).
+      return '';
+    }
+
     let processedValue = value;
     if (value) {
       const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -904,6 +908,9 @@ export class DatePickerComponent
 
     let date = this.dateAdapter.parse(processedValue, this.format());
     if (!date) {
+      if (this.allowEmpty()) {
+        return '';
+      }
       const today = this.dateAdapter.today();
       date = this.clampDate(today);
     } else {
@@ -1070,6 +1077,10 @@ export class DatePickerComponent
     switch (this.valueFormat()) {
       case "date":
         return date;
+      case "iso":
+        // ISO 8601 with timezone — the only string format that backends
+        // cannot misinterpret as a different day.
+        return date.toISOString();
       case "jalali":
         return this.jalaliDateAdapter.format(date, this.format());
       case "gregorian":
@@ -1145,8 +1156,20 @@ export class DatePickerComponent
     this.form!.get("startDateInput")?.setValue("", { emitEvent: false });
     this.form!.get("endDateInput")?.setValue("", { emitEvent: false });
     this.lastEmittedValue = null;
+    this.resetTimePicker();
     this.isInternalChange = false;
     this.changeDetectorRef.markForCheck();
+  }
+
+  /**
+   * Reset the embedded time picker's stale state so that it cannot re-emit
+   * a date after the parent has been cleared. Without this, `_value` and
+   * `_selectedDate` survive a clear and trigger re-emission on the next
+   * time change.
+   */
+  private resetTimePicker(): void {
+    const tp = this.datePickerPopup()?.timePicker();
+    tp?.clear();
   }
 
   registerOnChange(fn: any): void {

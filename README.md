@@ -209,12 +209,18 @@ export class AppComponent {
   template: `
     <persian-date-picker
       [(ngModel)]="selectedDate"
-      [valueFormat]="'gregorian'"  // 'gregorian' | 'jalali' | 'date'
+      [valueFormat]="'gregorian'"  // 'gregorian' | 'jalali' | 'date' | 'iso'
       [calendarType]="'jalali'">
     </persian-date-picker>
   `
 })
 ```
+
+- `'gregorian'` / `'jalali'`: formatted string via the `format` input (no timezone designator)
+- `'date'`: raw JS `Date` object (local time)
+- `'iso'`: ISO 8601 string with timezone (e.g. `2026-08-01T00:00:00.000Z`) — recommended when
+  sending the value to a backend, because it is the only format that cannot be misinterpreted
+  as a different day.
 
 ### Disabled Dates
 
@@ -421,7 +427,7 @@ export class AppComponent {
 | isInline            | boolean                           | false        | Show calendar inline                                       |
 | showSidebar         | boolean                           | true         | Show sidebar with months/years                             |
 | showToday           | boolean                           | false        | Highlight today's date                                     |
-| valueFormat         | 'gregorian' \| 'jalali' \| 'date' | 'gregorian'  | Output value format                                        |
+| valueFormat         | 'gregorian' \| 'jalali' \| 'date' \| 'iso' | 'gregorian'  | Output value format                                        |
 | disableInputMask    | boolean                           | false        | To disable input mask                                      |
 | disabledDates       | Array<Date>                       |              | string>                                                    | undefined     | Array of Date and string to disable the entire day |
 | disabledDatesFilter | (date: Date) => boolean           | undefined    | Function to determine if a date should be disabled         |

@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   HostListener,
   output,
@@ -20,10 +21,26 @@ import { takeUntil } from "rxjs";
   imports: [NgTemplateOutlet, TimePickerComponent, ConvertNumbersPipe],
   templateUrl: "./date-picker-popup.component.html",
   styleUrls: ["./date-picker-popup.component.scss"],
+  host: {
+    '[class.dtp-dark]': 'persianDateTimePickerService.isDark()'
+  }
 })
 export class DatePickerPopupComponent
   extends PersianDatePickerBase
   implements AfterViewInit {
+
+  constructor() {
+    super();
+    // Reactively update the time picker display whenever the selected date changes.
+    // (ngAfterViewInit only fires once; this effect keeps the time picker in sync
+    //  when the user navigates the calendar or picks a new date.)
+    effect(() => {
+      const date = this.selectedDate();
+      if (date && this.timePicker()) {
+        this.setTimePickerDate(date);
+      }
+    });
+  }
 
   // ========== Output Signals ==========
   clickInside = output<boolean>();
@@ -59,11 +76,11 @@ export class DatePickerPopupComponent
       );
       if (selectedElement) {
         selectedElement.scrollIntoView({
-          behavior: "smooth",
+          behavior: "instant",
           block: "center",
         });
       }
-    }, 0);
+    }, 200);
   }
 
   determineScrollItemId(id: number | null): number | null {

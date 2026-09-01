@@ -1,0 +1,80 @@
+// ============================================
+// Persian Date Time Picker — CSS Custom Property Tokens
+// Light + dark color palettes (Tailwind-aligned defaults)
+// Consumers may override any --dtp-* variable by targeting the component host
+//   e.g. persian-date-picker-popup { --dtp-primary: purple; }
+// ============================================
+
+// Light defaults — defined on each component's host so they work with
+// Angular emulated view encapsulation. When dtp-dark is active, the
+// :host.dtp-dark block overrides values.
+:host {
+  --dtp-surface: #ffffff;
+  --dtp-surface-alt: #f9fafb;       /* gray-50 */
+  --dtp-text: #111827;              /* gray-900 */
+  --dtp-text-secondary: #6b7280;    /* gray-500 */
+  --dtp-border: #e5e7eb;            /* gray-200 */
+  --dtp-primary: #2563eb;           /* blue-600 */
+  --dtp-primary-hover: #1d4ed8;     /* blue-700 */
+  --dtp-primary-light: #eff6ff;     /* blue-50 */
+  --dtp-primary-text: #ffffff;
+  --dtp-disabled: #f3f4f6;          /* gray-100 */
+  --dtp-disabled-text: #9ca3af;     /* gray-400 */
+  --dtp-backdrop: rgba(0, 0, 0, 0.5);
+  --dtp-shadow: rgba(0, 0, 0, 0.1);
+  --dtp-today-ring: #2563eb;        /* blue-600 */
+  --dtp-input-bg: #ffffff;
+  --dtp-input-border: #d9d9d9;
+  --dtp-success: #10b981;           /* emerald-500 */
+  --dtp-danger: #e65100;            /* orange-900 */
+  --dtp-danger-bg: #fff3e0;         /* orange-50 */
+
+  // Time-picker specific
+  --dtp-focus-shadow: rgba(24, 144, 255, 0.2);
+  --dtp-selection-bg: #e6f4ff;
+  --dtp-separator: #999;
+  --dtp-border-light: #f0f0f0;
+  --dtp-column-bg-hover: #f5f5f5;
+  --dtp-column-bg-selected: #e6f4ff;
+  --dtp-column-disabled-bg: #fafafa;
+
+  // Mobile-specific (mapped from --mobile-*)
+  --dtp-mobile-divider: #e5e7eb;
+  --dtp-mobile-surface: #f9fafb;
+}
+
+// Dark — activated when a parent (or host) has class .dtp-dark
+:host.dtp-dark {
+  --dtp-surface: #1f2937;             /* gray-800 */
+  --dtp-surface-alt: #111827;         /* gray-900 */
+  --dtp-text: #f9fafb;               /* gray-50 */
+  --dtp-text-secondary: #9ca3af;     /* gray-400 */
+  --dtp-border: #374151;              /* gray-700 */
+  --dtp-primary: #3b82f6;            /* blue-500 */
+  --dtp-primary-hover: #60a5fa;      /* blue-400 */
+  --dtp-primary-light: #1e3a5f;      /* blue-900 tint */
+  --dtp-primary-text: #ffffff;
+  --dtp-disabled: #374151;            /* gray-700 */
+  --dtp-disabled-text: #6b7280;      /* gray-500 */
+  --dtp-backdrop: rgba(0, 0, 0, 0.7);
+  --dtp-shadow: rgba(0, 0, 0, 0.3);
+  --dtp-today-ring: #60a5fa;         /* blue-400 */
+  --dtp-input-bg: #1f2937;           /* gray-800 */
+  --dtp-input-border: #4b5563;       /* gray-600 */
+  --dtp-success: #34d399;            /* emerald-400 */
+  --dtp-danger: #ff8a65;             /* orange-300 */
+  --dtp-danger-bg: #3e2723;          /* brown-900 */
+
+  // Time-picker dark
+  --dtp-focus-shadow: rgba(59, 130, 246, 0.3);
+  --dtp-selection-bg: #1e3a5f;
+  --dtp-separator: #6b7280;
+  --dtp-border-light: #374151;
+  --dtp-column-bg-hover: #374151;
+  --dtp-column-bg-selected: #1e3a5f;
+  --dtp-column-disabled-bg: #111827;
+
+  // Mobile dark
+  --dtp-mobile-divider: #374151;
+  --dtp-mobile-surface: #111827;
+}

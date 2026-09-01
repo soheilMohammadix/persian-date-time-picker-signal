@@ -10,14 +10,16 @@ export const slideMotion: AnimationTriggerMetadata = trigger('slideMotion', [
     'void',
     style({
       opacity: 0,
-      transform: 'scaleY(0.8)'
+      transform: 'translateY(8px)',
+      transformOrigin: 'top center'
     })
   ),
   state(
     'enter',
     style({
       opacity: 1,
-      transform: 'scaleY(1)'
+      transform: 'translateY(0)',
+      transformOrigin: 'top center'
     })
   ),
   transition('void => *', [animate(ANIMATION_TRANSITION_IN)]),
@@ -28,15 +30,17 @@ export const slideUpMotion: AnimationTriggerMetadata = trigger('slideUpMotion', 
   state(
     'void',
     style({
-      transform: 'translateY(100%)',
-      opacity: 0
+      transform: 'translateY(8px)',
+      opacity: 0,
+      transformOrigin: 'top center'
     })
   ),
   state(
     'enter',
     style({
       transform: 'translateY(0)',
-      opacity: 1
+      opacity: 1,
+      transformOrigin: 'top center'
     })
   ),
   transition('void => *', [animate(ANIMATION_TRANSITION_IN)]),

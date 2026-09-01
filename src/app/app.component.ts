@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {
   CalendarType,
   DatePickerMode,
-  PersianDateTimePickerModule,
+  PersianDateTimePickerModule, PersianDateTimePickerService,
   RangeInputLabels,
   TimeValueType,
   ValueFormat
@@ -47,6 +47,7 @@ import {DisabledTimes} from './samples/disabled/diabled-time';
   ]
 })
 export class AppComponent {
+  persianDatePickerService = inject(PersianDateTimePickerService)
 
   title = 'persian-date-time-picker-signal-demo';
   Version = '0.1.1';

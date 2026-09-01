@@ -1,4 +1,4 @@
-<div [class.rtl]="rtl()" [class]="cssClass()" class="date-picker-popup mobile-view" tabindex="-1">
+<div [class.rtl]="rtl()" [class]="cssClass()" class="date-picker-popup" tabindex="-1">
   <div class="date-picker-content">
     <!-- Header Section -->
     <div class="date-picker-header">
@@ -114,11 +114,19 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
+<<<<<<< HEAD
       <button type="button" (click)="onOkClick()" class="ok-button" tabindex="-1">
         {{ lang?.ok }}
+=======
+      <button (click)="onClearClick()" class="clear-button" tabindex="-1">
+        {{ lang?.clear }}
+>>>>>>> a3420b36c598a313a6a42748f38987da97cafc81
       </button>
       <button type="button" (click)="closeDatePicker()" class="cancel-button" tabindex="-1">
         {{ lang?.cancel }}
+      </button>
+      <button (click)="onOkClick()" class="ok-button" tabindex="-1">
+        {{ lang?.ok }}
       </button>
     </div>
   </div>

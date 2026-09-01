@@ -1,6 +1,7 @@
-import {Injectable, OnDestroy, signal, DestroyRef} from "@angular/core";
+import {Inject, Injectable, OnDestroy, Optional, signal, computed, DestroyRef} from "@angular/core";
 import {BehaviorSubject, Subject, takeUntil} from "rxjs";
 import {EnglishLocale, LanguageLocale, PersianLocale} from "./utils/models";
+import {PERSIAN_DATE_TIME_PICKER_CONFIG, PersianDateTimePickerConfig} from "./persian-date-time-picker.config";
 
 export interface ValidTimeResult {
   isValid: boolean;
@@ -17,7 +18,57 @@ export class PersianDateTimePickerService {
   readonly activeInputSignal = signal<'start' | 'end' | ''>('');
   readonly languageLocaleSignal = signal<LanguageLocale | undefined>(undefined);
 
-  constructor(public persianLocale: PersianLocale, public englishLocale: EnglishLocale) {
+  // ========== Dark Mode ==========
+
+  /** Consumer-facing: 'auto' (default) | 'light' | 'dark' */
+  readonly theme = signal<'auto' | 'light' | 'dark'>('auto');
+
+  /** True when the OS prefers dark scheme (backed by matchMedia) */
+  private readonly _prefersDark = signal(false);
+
+  /** True when <html> has the configured dark mode class (backed by MutationObserver) */
+  private readonly _htmlHasDark = signal(false);
+
+  /** Computed — single source of truth */
+  readonly isDark = computed(() => {
+    const t = this.theme();
+    if (t === 'light') return false;
+    if (t === 'dark') return true;
+    return this._prefersDark() || this._htmlHasDark();
+  });
+
+  private readonly _darkModeClass: string;
+  private readonly _detectPrefersColorScheme: boolean;
+
+  constructor(
+    public persianLocale: PersianLocale,
+    public englishLocale: EnglishLocale,
+    private destroyRef: DestroyRef,
+    @Optional() @Inject(PERSIAN_DATE_TIME_PICKER_CONFIG) config: PersianDateTimePickerConfig | null
+  ) {
+    this._darkModeClass = config?.darkModeClass ?? 'dark';
+    this._detectPrefersColorScheme = config?.detectPrefersColorScheme ?? true;
+    this._setupDarkModeDetection();
+  }
+
+  private _setupDarkModeDetection(): void {
+    // 1) prefers-color-scheme media query (optional)
+    if (this._detectPrefersColorScheme) {
+      const darkMq = window.matchMedia('(prefers-color-scheme: dark)');
+      this._prefersDark.set(darkMq.matches);
+      darkMq.addEventListener('change', (e: MediaQueryListEvent) => {
+        this._prefersDark.set(e.matches);
+      });
+    }
+
+    // 2) MutationObserver for configured dark mode class on <html>
+    const observer = new MutationObserver(() => {
+      this._htmlHasDark.set(document.documentElement.classList.contains(this._darkModeClass));
+    });
+    observer.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
+
+    // Cleanup observer when service is destroyed
+    this.destroyRef.onDestroy(() => observer.disconnect());
   }
 
   // Method to update both BehaviorSubject and signal
@@ -61,7 +112,7 @@ export class PersianDateTimePickerService {
   }
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DestroyService extends Subject<void> implements OnDestroy {
   constructor(private destroyRef: DestroyRef) {
     super();

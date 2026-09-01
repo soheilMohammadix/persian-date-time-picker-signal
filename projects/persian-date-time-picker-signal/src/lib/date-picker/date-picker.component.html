@@ -55,7 +55,7 @@
       [class.persian-date-picker-dropdown-placement-topRight]="currentPositionY === 'top' && currentPositionX === 'end'"
       [class.persian-date-picker-dropdown-range]="isRange()" [class.persian-date-picker-dropdown-rtl]="rtl()"
       class="dp-dropdown">
-      <persian-date-picker-popup (clickInside)="focus()" (closePicker)="close()"
+      <persian-date-picker-popup (clickInside)="focus()" (clearSelected)="onClear()" (closePicker)="close()"
         (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
         [@slideMotion]="'enter'" [activeInput]="activeInput()" [attr.disabled]="disabled()? 'disabled':null"
         [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
@@ -79,7 +79,7 @@
       [class.persian-date-picker-dropdown-placement-topRight]="currentPositionY === 'top' && currentPositionX === 'end'"
       [class.persian-date-picker-dropdown-range]="isRange()" [class.persian-date-picker-dropdown-rtl]="rtl()"
       class="dp-dropdown">
-      <persian-date-picker-popup (clickInside)="focus()" (closePicker)="close()"
+      <persian-date-picker-popup (clickInside)="focus()" (clearSelected)="onClear()" (closePicker)="close()"
         (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
         [@slideMotion]="'enter'" [activeInput]="activeInput()" [attr.disabled]="disabled()? 'disabled':null"
         [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
@@ -92,29 +92,19 @@
       [timeDisplayFormat]="timeDisplayFormat()" tabindex="-1"></persian-date-picker-popup>
     </div>
   </ng-template>
-    @if (isMobile() && isOpen()) {
-      <!-- Mobile Backdrop -->
-      <div class="mobile-backdrop" (click)="close()"></div>
-
-      <mobile-date-picker (closePicker)="close()" (dateRangeSelected)="onDateRangeSelected($event)" (dateSelected)="onDateSelected($event)"
-        [activeInput]="activeInput()" [calendarType]="calendarType()" [cssClass]="cssClass()" [customLabels]="customLabels()"
-        [dateFormat]="extractDateFormat(format())" [disabledDatesFilter]="disabledDatesFilter()" [disabledDates]="disabledDates()"
-        [disabledTimesFilter]="disabledTimesFilter()" [footerDescription]="footerDescription()" [isRange]="isRange()"
-        [maxDate]="parsedMaxDate()" [minDate]="parsedMinDate()" [mode]="mode()" [rtl]="rtl()" [selectedDate]="selectedDate()"
-        [selectedEndDate]="selectedEndDate()" [selectedStartDate]="selectedStartDate()" [showSidebar]="showSidebar()"
-        [showTimePicker]="showTimePicker()" [showToday]="showToday()" [templates]="templates()"
-        [timeDisplayFormat]="timeDisplayFormat()" tabindex="-1"></mobile-date-picker>
-    } @else if (!isMobile()) {
-      <ng-template (detach)="close()" (positionChange)="onPositionChange($event)"
-        [cdkConnectedOverlayHasBackdrop]="true" [cdkConnectedOverlayBackdropClass]="'desktop-backdrop'"
-        [cdkConnectedOverlayOpen]="isOpen()" [cdkConnectedOverlayOrigin]="origin!"
-        [cdkConnectedOverlayPositions]="overlayPositions"
-        [cdkConnectedOverlayTransformOriginOn]="'.persian-date-time-picker-signal-wrapper'" cdkConnectedOverlay
-        nzConnectedOverlay>
-        <div (click)="$event.stopPropagation()" [@slideUpMotion]="'enter'" [class.disabled]="disabled()"
-          class="persian-date-time-picker-wrapper" style="position: relative;">
-          <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
-        </div>
-      </ng-template>
-    }
+    <!-- CDK overlay renders on all screen sizes (mobile + desktop). The previous hand-rolled
+         mobile path (custom .mobile-backdrop + <mobile-date-picker> with position:fixed/vw/vh)
+         triggered iOS Safari rendering bugs (backdrop-filter + vw overflow → "zoomed in").
+         CDK's overlay is tested on iOS Safari and handles positioning/backdrop correctly. -->
+    <ng-template (detach)="close()" (positionChange)="onPositionChange($event)"
+      [cdkConnectedOverlayHasBackdrop]="true" [cdkConnectedOverlayBackdropClass]="'desktop-backdrop'"
+      [cdkConnectedOverlayOpen]="isOpen()" [cdkConnectedOverlayOrigin]="origin!"
+      [cdkConnectedOverlayPositions]="overlayPositions"
+      [cdkConnectedOverlayTransformOriginOn]="'.persian-date-time-picker-signal-wrapper'" cdkConnectedOverlay
+      nzConnectedOverlay>
+      <div (click)="$event.stopPropagation()" [@slideUpMotion]="'enter'" [class.disabled]="disabled()"
+        class="persian-date-time-picker-wrapper" style="position: relative;">
+        <ng-container *ngTemplateOutlet="inlineMode"></ng-container>
+      </div>
+    </ng-template>
 </div>

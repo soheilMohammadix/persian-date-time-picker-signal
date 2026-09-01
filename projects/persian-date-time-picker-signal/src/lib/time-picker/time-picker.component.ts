@@ -61,7 +61,8 @@ import { DateMaskDirective } from '../utils/input-mask.directive';
     }
   ],
   host: {
-    '(click)': 'open()'
+    '(click)': 'open()',
+    '[class.dtp-dark]': 'persianDateTimePickerService.isDark()'
   },
   animations: [slideMotion]
 })
@@ -228,6 +229,10 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
         this._selectedDate = d;
         // updateFromValue calls updateFromDate using value but _selectedDate is used as base
         this.updateFromValue(this._value);
+      } else {
+        // Parent cleared its selection — drop the stale date so save()
+        // cannot reconstruct and re-emit it.
+        this._selectedDate = null;
       }
     });
 
@@ -372,6 +377,19 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
     this.changeDetectorRef.markForCheck();
   }
 
+  /**
+   * Clears all internal state without emitting any value.
+   * Called by the parent date picker when the user clears the selection,
+   * so stale `_value` / `_selectedDate` cannot re-emit a date afterwards.
+   */
+  clear(): void {
+    this._value = null;
+    this._selectedDate = null;
+    this.form?.get('timeInput')?.setValue('', { emitEvent: false });
+    this.resetSelection();
+    this.changeDetectorRef.markForCheck();
+  }
+
   writeValue(value: Date | string | null): void {
     if (!value) {
       this._value = null;
@@ -383,6 +401,11 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
 
     if (value instanceof Date) {
       this._value = value;
+      // Sync selectedTime with the incoming date's actual time BEFORE any
+      // save(). Without this, a freshly-mounted picker still holds the
+      // default {hour:12} selection and emits "date + 12:00" the moment the
+      // popup (re)opens — silently overwriting the user's chosen time.
+      this.updateFromDate(value);
     } else if (typeof value === 'string' && value.trim()) {
       const date = this._selectedDate;
       this._value = !isNaN(date!.getTime()) && this.valueType() === 'date' ? date : value;
@@ -678,9 +701,18 @@ export class TimePickerComponent implements ControlValueAccessor, OnInit, OnDest
       if (time.period === lang.am && hours === 12) hours = 0;
     }
 
+    // Use selectedDateInput() signal (synchronous) to avoid race condition
+    // with the async effect that writes to _selectedDate
     let date = this._value instanceof Date ?
       adapter.clone(this._value) :
-      this._selectedDate;
+      (this.selectedDateInput() || this._selectedDate);
+
+    // After a clear all bases can be null; fall back to "now" so the time
+    // setters below don't crash. This does NOT resurrect the cleared date
+    // selection — the parent's updateSingleDateTime() guards that.
+    if (!date) {
+      date = new Date();
+    }
 
     // Only update time components of the date
     date = adapter.setHours(date!, hours);
