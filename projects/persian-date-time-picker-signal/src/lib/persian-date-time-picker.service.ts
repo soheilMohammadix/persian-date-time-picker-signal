@@ -62,6 +62,9 @@ export class PersianDateTimePickerService {
     }
 
     // 2) MutationObserver for configured dark mode class on <html>
+    // Read the current DOM state first: if the class is already present at
+    // construction time, no mutation will ever fire and isDark would stay false.
+    this._htmlHasDark.set(document.documentElement.classList.contains(this._darkModeClass));
     const observer = new MutationObserver(() => {
       this._htmlHasDark.set(document.documentElement.classList.contains(this._darkModeClass));
     });
